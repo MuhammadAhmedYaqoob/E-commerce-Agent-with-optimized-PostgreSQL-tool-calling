@@ -240,13 +240,10 @@ curl -X POST http://localhost:8000/query \
 2. Rebuild graph: `POST /build-graph`
 3. Test with queries
 
-## 📝 License
-
-[Your License Here]
 
 ## 👥 Authors
 
-[Your Name/Team]
+Muhammad Ahmed Yaqoob
 
 ## 🙏 Acknowledgments
 
