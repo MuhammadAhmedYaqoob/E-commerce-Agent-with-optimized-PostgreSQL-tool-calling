@@ -15,6 +15,7 @@ from ..minirag.graph_retriever import MiniRAGRetriever
 from ..tools.gmail_tool import GmailTool
 from ..tools.supabase_tool import SupabaseTool
 from ..generator import generate_answer
+from .planning import PlanningModule
 
 class AgentState(TypedDict):
     """State for the agentic workflow"""
@@ -41,6 +42,7 @@ class ECommerceAgent:
         self.retriever = MiniRAGRetriever()
         self.gmail_tool = GmailTool()
         self.supabase_tool = SupabaseTool()
+        self.planning_module = PlanningModule()  # Explicit planning
         
         # Define tools
         self.tools = [
@@ -224,10 +226,40 @@ class ECommerceAgent:
         return state
     
     def _reason_node(self, state: AgentState) -> AgentState:
-        """Agent reasoning step - decide on next action"""
+        """Agent reasoning step - decide on next action with explicit planning"""
         messages = state.get("messages", [])
         query = state.get("query", "")
         context = state.get("retrieved_context", [])
+        
+        # Explicit planning with scratchpad
+        previous_state = {
+            "retrieved_context": context,
+            "user_email": state.get("user_email", ""),
+            "tool_results": state.get("tool_results", {})
+        }
+        
+        # Get tool names
+        available_tools = []
+        for tool in self.tools:
+            if hasattr(tool, 'name'):
+                available_tools.append(tool.name)
+            elif hasattr(tool, 'func'):
+                available_tools.append(tool.func.__name__)
+            else:
+                available_tools.append(str(tool))
+        plan = self.planning_module.plan_action_sequence(
+            query=query,
+            context=context,
+            available_tools=available_tools,
+            previous_state=previous_state
+        )
+        
+        # Add planning reasoning to scratchpad
+        self.planning_module.scratchpad.add_reasoning_step(
+            step="Query analysis",
+            reasoning=f"Analyzed query: {query[:50]}...",
+            confidence=1.0 - plan.get("uncertainty", 0.0)
+        )
         
         # Build context string
         context_str = "\n\n".join([
@@ -235,8 +267,11 @@ class ECommerceAgent:
             for r in context[:3]
         ])
         
-        # System message with context
-        system_msg = f"{AGENT_SYSTEM_PROMPT}\n\nRetrieved Context:\n{context_str}"
+        # Include planning information in system message
+        planning_info = f"\n\nPlanning:\nPrimary Action: {plan['primary_action']}\nUncertainty: {plan.get('uncertainty', 0.0):.2f}"
+        
+        # System message with context and planning
+        system_msg = f"{AGENT_SYSTEM_PROMPT}\n\nRetrieved Context:\n{context_str}{planning_info}"
         
         # Prepare messages
         reasoning_messages = [
@@ -250,6 +285,8 @@ class ECommerceAgent:
         state["messages"].append(response)
         state["current_step"] = "reasoned"
         state["iteration_count"] = state.get("iteration_count", 0) + 1
+        state["planning_scratchpad"] = self.planning_module.get_scratchpad().to_dict()
+        state["action_plan"] = plan
         
         return state
     
