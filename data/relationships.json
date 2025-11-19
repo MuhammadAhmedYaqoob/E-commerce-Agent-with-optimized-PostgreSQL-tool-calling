@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "domain": "e-commerce",
+    "category": "relationships",
+    "last_updated": "2025-01-15"
+  },
+  "relationships": {
+    "policy_connections": [
+      {"from": "return_refund", "to": "shipping_delivery", "relation": "related_to", "strength": 0.8},
+      {"from": "return_refund", "to": "payment_security", "relation": "related_to", "strength": 0.7},
+      {"from": "return_refund", "to": "size_guide", "relation": "related_to", "strength": 0.9},
+      {"from": "shipping_delivery", "to": "inventory_management", "relation": "depends_on", "strength": 0.6},
+      {"from": "payment_security", "to": "privacy_data", "relation": "related_to", "strength": 0.9},
+      {"from": "customer_service", "to": "size_guide", "relation": "supports", "strength": 0.8},
+      {"from": "product_quality", "to": "care_instructions", "relation": "complements", "strength": 0.7},
+      {"from": "size_guide", "to": "return_refund", "relation": "reduces", "strength": 0.8}
+    ],
+    "entity_connections": [
+      {"from": "Men's Clothing", "to": "return_refund", "relation": "governed_by", "strength": 0.9},
+      {"from": "Women's Clothing", "to": "return_refund", "relation": "governed_by", "strength": 0.9},
+      {"from": "order_statuses", "to": "shipping_delivery", "relation": "tracked_by", "strength": 0.8},
+      {"from": "clothing_sizes_men", "to": "size_guide", "relation": "defined_in", "strength": 0.9},
+      {"from": "clothing_sizes_women", "to": "size_guide", "relation": "defined_in", "strength": 0.9},
+      {"from": "fabric_types", "to": "care_instructions", "relation": "requires", "strength": 0.8}
+    ],
+    "category_connections": [
+      {"from": "Men's T-Shirts", "to": "Men's Clothing", "relation": "is_a", "strength": 1.0},
+      {"from": "Women's Dresses", "to": "Women's Clothing", "relation": "is_a", "strength": 1.0},
+      {"from": "Men's Pants", "to": "Men's Clothing", "relation": "is_a", "strength": 1.0},
+      {"from": "Women's Tops", "to": "Women's Clothing", "relation": "is_a", "strength": 1.0}
+    ]
+  }
+}
+

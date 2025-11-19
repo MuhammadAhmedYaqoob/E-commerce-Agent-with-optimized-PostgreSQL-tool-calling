@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "domain": "e-commerce",
+    "category": "entities",
+    "last_updated": "2025-01-15"
+  },
+  "entities": {
+    "product_categories": [
+      "Men's Clothing",
+      "Women's Clothing",
+      "Men's T-Shirts",
+      "Women's Dresses",
+      "Men's Pants",
+      "Women's Tops",
+      "Men's Shirts",
+      "Women's Jeans",
+      "Men's Jeans",
+      "Women's Skirts",
+      "Men's Jackets",
+      "Women's Jackets",
+      "Men's Shoes",
+      "Women's Shoes",
+      "Accessories",
+      "Bags",
+      "Jewelry",
+      "Watches"
+    ],
+    "clothing_sizes_men": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "clothing_sizes_women": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "0",
+      "2",
+      "4",
+      "6",
+      "8",
+      "10",
+      "12",
+      "14",
+      "16",
+      "18"
+    ],
+    "order_statuses": [
+      "Pending",
+      "Processing",
+      "Shipped",
+      "Delivered",
+      "Cancelled",
+      "Returned",
+      "Refunded",
+      "On Hold",
+      "Backordered"
+    ],
+    "payment_statuses": [
+      "Pending",
+      "Authorized",
+      "Captured",
+      "Failed",
+      "Refunded",
+      "Partially Refunded",
+      "Chargeback"
+    ],
+    "shipping_carriers": [
+      "FedEx",
+      "UPS",
+      "USPS",
+      "DHL",
+      "Amazon Logistics"
+    ],
+    "fabric_types": [
+      "Cotton",
+      "Polyester",
+      "Wool",
+      "Silk",
+      "Linen",
+      "Denim",
+      "Leather",
+      "Cashmere",
+      "Bamboo",
+      "Modal"
+    ],
+    "colors": [
+      "Black",
+      "White",
+      "Navy",
+      "Gray",
+      "Beige",
+      "Brown",
+      "Red",
+      "Blue",
+      "Green",
+      "Pink",
+      "Yellow",
+      "Purple",
+      "Orange"
+    ],
+    "styles": [
+      "Casual",
+      "Formal",
+      "Business",
+      "Sporty",
+      "Vintage",
+      "Modern",
+      "Classic",
+      "Trendy",
+      "Bohemian",
+      "Minimalist"
+    ],
+    "seasons": [
+      "Spring",
+      "Summer",
+      "Fall",
+      "Winter",
+      "All Season"
+    ]
+  }
+}
+

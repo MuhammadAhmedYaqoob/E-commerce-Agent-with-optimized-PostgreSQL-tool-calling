@@ -1,0 +1,374 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "domain": "e-commerce",
+    "category": "policies",
+    "last_updated": "2025-01-15"
+  },
+  "policies": {
+    "return_refund": {
+      "id": "POL-001",
+      "title": "Return and Refund Policy",
+      "category": "customer_service",
+      "priority": "high",
+      "content": {
+        "return_window": "Customers have 30 days from the date of delivery to return items in original condition",
+        "eligibility": [
+          "Items must be unused, unwashed, and in original packaging",
+          "Items with tags attached are eligible for return",
+          "Personalized or customized items are non-returnable",
+          "Digital products are non-refundable unless defective",
+          "Gift cards and vouchers are non-refundable",
+          "Items marked as 'Final Sale' cannot be returned",
+          "Clothing items must be unworn with original tags"
+        ],
+        "refund_process": {
+          "timeline": "Refunds processed within 5-7 business days after receiving returned item",
+          "method": "Refunds issued to original payment method",
+          "shipping": "Original shipping costs are non-refundable unless item was defective or wrong item sent",
+          "restocking_fee": "No restocking fees for standard returns within return window"
+        },
+        "exceptions": [
+          "Final sale items marked as 'No Returns'",
+          "Items damaged by customer",
+          "Items returned after 30-day window",
+          "Items without proof of purchase",
+          "Items that have been used beyond normal inspection",
+          "Clothing items that have been worn or washed"
+        ],
+        "guardrails": {
+          "fraud_prevention": "Returns monitored for patterns indicating fraud",
+          "abuse_detection": "Excessive returns may result in account review",
+          "verification": "All returns require order number and verification"
+        }
+      }
+    },
+    "shipping_delivery": {
+      "id": "POL-002",
+      "title": "Shipping and Delivery Policy",
+      "category": "logistics",
+      "priority": "high",
+      "content": {
+        "shipping_methods": {
+          "standard": {
+            "duration": "5-7 business days",
+            "cost": "Free for orders over $50, otherwise $5.99",
+            "tracking": "Included",
+            "insurance": "Included up to $100 value"
+          },
+          "express": {
+            "duration": "2-3 business days",
+            "cost": "$12.99",
+            "tracking": "Included with real-time updates",
+            "insurance": "Included up to $500 value"
+          },
+          "overnight": {
+            "duration": "Next business day",
+            "cost": "$24.99",
+            "tracking": "Priority tracking with delivery confirmation",
+            "insurance": "Included up to $1000 value"
+          }
+        },
+        "international_shipping": {
+          "available": true,
+          "duration": "10-21 business days depending on destination",
+          "cost": "Calculated at checkout based on weight and destination",
+          "customs": "Customer responsible for customs duties and taxes",
+          "restrictions": "Some items restricted by destination country",
+          "documentation": "All international shipments include customs documentation"
+        },
+        "delivery_issues": {
+          "lost_packages": "Contact support within 14 days of expected delivery for investigation",
+          "damaged_items": "Report within 48 hours with photos for replacement or refund",
+          "wrong_address": "Customer responsible if address error, reshipment charges apply",
+          "delayed_delivery": "Contact support if delivery exceeds estimated timeframe",
+          "signature_required": "High-value items require signature confirmation"
+        },
+        "guardrails": {
+          "address_validation": "All addresses validated before shipping",
+          "carrier_verification": "Only verified carriers used for shipping",
+          "tracking_required": "All shipments must have tracking numbers"
+        }
+      }
+    },
+    "privacy_data": {
+      "id": "POL-003",
+      "title": "Privacy and Data Protection Policy",
+      "category": "legal",
+      "priority": "critical",
+      "content": {
+        "data_collection": {
+          "personal_info": [
+            "Name, email, phone number for account creation",
+            "Shipping and billing addresses",
+            "Payment information (encrypted, not stored)",
+            "Purchase history and preferences",
+            "Device information for security",
+            "Size preferences and style preferences"
+          ],
+          "usage_data": [
+            "Browsing behavior and product views",
+            "Device information and IP address",
+            "Cookies and tracking technologies",
+            "Search queries and filters used"
+          ],
+          "third_party": "We may share data with payment processors, shipping partners, and analytics providers"
+        },
+        "data_protection": {
+          "encryption": "All sensitive data encrypted using SSL/TLS and AES-256",
+          "storage": "Data stored in secure, compliant databases with regular backups",
+          "retention": "Data retained as required by law or business needs, typically 7 years for financial records",
+          "deletion": "Data deleted upon request within 30 days, subject to legal requirements",
+          "rights": "Customers can request data access, deletion, or correction at any time"
+        },
+        "gdpr_compliance": {
+          "applicable": true,
+          "rights": [
+            "Right to access personal data",
+            "Right to rectification",
+            "Right to erasure (right to be forgotten)",
+            "Right to data portability",
+            "Right to object to processing",
+            "Right to restrict processing"
+          ]
+        }
+      }
+    },
+    "payment_security": {
+      "id": "POL-004",
+      "title": "Payment and Security Policy",
+      "category": "financial",
+      "priority": "critical",
+      "content": {
+        "accepted_methods": [
+          "Credit cards (Visa, MasterCard, American Express, Discover)",
+          "Debit cards",
+          "PayPal",
+          "Apple Pay",
+          "Google Pay",
+          "Bank transfers (for large orders)"
+        ],
+        "security_measures": {
+          "pci_compliance": "PCI DSS Level 1 certified",
+          "encryption": "End-to-end encryption for all transactions using TLS 1.3",
+          "fraud_detection": "AI-powered fraud detection system with real-time monitoring",
+          "two_factor": "Optional 2FA for account security",
+          "tokenization": "Payment data tokenized, never stored in plain text"
+        },
+        "payment_processing": {
+          "authorization": "Payment authorized at checkout",
+          "capture": "Payment captured upon order confirmation",
+          "failed_payments": "Automatic retry for failed transactions (max 3 attempts)",
+          "refunds": "Processed within 5-7 business days"
+        }
+      }
+    },
+    "product_quality": {
+      "id": "POL-005",
+      "title": "Product Quality and Authenticity",
+      "category": "quality_assurance",
+      "priority": "high",
+      "content": {
+        "authenticity_guarantee": {
+          "verified_sellers": "All products from verified, authenticated sellers",
+          "certification": "Products come with authenticity certificates where applicable",
+          "inspection": "Random quality inspections conducted on 10% of inventory"
+        },
+        "quality_standards": {
+          "new_items": "Brand new, factory-sealed items with manufacturer warranty",
+          "defects": "Defective items replaced or refunded immediately",
+          "warranty": "Manufacturer warranty applies to eligible products",
+          "sizing": "Accurate size charts provided for all clothing items",
+          "material_composition": "Full material composition listed for all clothing items"
+        },
+        "product_information": {
+          "descriptions": "Accurate, detailed product descriptions with specifications",
+          "images": "High-resolution images from multiple angles (minimum 5 images)",
+          "specifications": "Complete technical specifications provided including size, material, care instructions",
+          "reviews": "Customer reviews and ratings displayed (verified purchases only)"
+        }
+      }
+    },
+    "customer_service": {
+      "id": "POL-006",
+      "title": "Customer Service Standards",
+      "category": "customer_service",
+      "priority": "high",
+      "content": {
+        "availability": {
+          "hours": "24/7 customer support via chat, email, and phone",
+          "response_time": {
+            "chat": "Average response time: 2 minutes, maximum 5 minutes",
+            "email": "Response within 24 hours, typically within 4 hours",
+            "phone": "Immediate assistance during business hours (9 AM - 9 PM EST)"
+          },
+          "languages": "Support available in English, Spanish, French, and Mandarin"
+        },
+        "support_channels": [
+          "Live chat on website (24/7)",
+          "Email: support@ecommerce.com",
+          "Phone: 1-800-ECOMMERCE (toll-free)",
+          "Social media: @ecommerce_support",
+          "Help center with self-service options"
+        ],
+        "service_guarantee": {
+          "satisfaction": "100% satisfaction guarantee or money back within 30 days",
+          "resolution": "Issues resolved within 48 hours, complex issues within 7 days",
+          "escalation": "Complex issues escalated to senior support team within 24 hours"
+        }
+      }
+    },
+    "loyalty_rewards": {
+      "id": "POL-007",
+      "title": "Loyalty and Rewards Program",
+      "category": "marketing",
+      "priority": "medium",
+      "content": {
+        "membership_tiers": {
+          "bronze": {
+            "points_rate": "1 point per $1 spent",
+            "benefits": ["Birthday discount (10%)", "Early access to sales", "Newsletter subscription"],
+            "minimum_spend": "$0"
+          },
+          "silver": {
+            "points_rate": "1.5 points per $1 spent",
+            "benefits": ["Free standard shipping", "Exclusive deals (15% off)", "Priority support", "Birthday discount (15%)"],
+            "minimum_spend": "$500 annually"
+          },
+          "gold": {
+            "points_rate": "2 points per $1 spent",
+            "benefits": ["Free express shipping", "VIP events access", "Personal shopper", "Birthday discount (20%)", "Early product launches"],
+            "minimum_spend": "$2000 annually"
+          },
+          "platinum": {
+            "points_rate": "3 points per $1 spent",
+            "benefits": ["All Gold benefits", "Concierge service", "Custom products", "Birthday discount (25%)", "Exclusive products"],
+            "minimum_spend": "$5000 annually"
+          }
+        },
+        "redemption": {
+          "minimum": "500 points required for redemption",
+          "value": "100 points = $1 discount",
+          "expiration": "Points expire after 12 months of inactivity"
+        }
+      }
+    },
+    "inventory_management": {
+      "id": "POL-008",
+      "title": "Inventory and Stock Management",
+      "category": "operations",
+      "priority": "high",
+      "content": {
+        "stock_status": {
+          "in_stock": "Available for immediate shipping",
+          "low_stock": "Limited quantity available (less than 10 units)",
+          "out_of_stock": "Currently unavailable, backorder option available",
+          "pre_order": "Available for pre-order, ships on release date",
+          "discontinued": "Product no longer available, no restock planned"
+        },
+        "restocking": {
+          "frequency": "Daily inventory updates, real-time for high-demand items",
+          "notifications": "Email alerts when out-of-stock items become available",
+          "backorders": "Backorders accepted with estimated restock date (typically 2-4 weeks)",
+          "cancellation": "Backorders can be cancelled with full refund if not yet shipped"
+        },
+        "pricing": {
+          "dynamic": "Prices may change based on market conditions and demand",
+          "price_match": "Price match guarantee within 30 days of purchase (for authorized retailers)",
+          "discounts": "Automatic application of applicable discounts and coupons",
+          "price_drops": "Price drop protection: refund difference if price drops within 7 days"
+        }
+      }
+    },
+    "size_guide": {
+      "id": "POL-009",
+      "title": "Size Guide and Fitting Policy",
+      "category": "product_info",
+      "priority": "high",
+      "content": {
+        "size_charts": {
+          "men": {
+            "shirts": {
+              "XS": {"chest": "34-36 inches", "waist": "28-30 inches"},
+              "S": {"chest": "36-38 inches", "waist": "30-32 inches"},
+              "M": {"chest": "38-40 inches", "waist": "32-34 inches"},
+              "L": {"chest": "40-42 inches", "waist": "34-36 inches"},
+              "XL": {"chest": "42-44 inches", "waist": "36-38 inches"},
+              "XXL": {"chest": "44-46 inches", "waist": "38-40 inches"}
+            },
+            "pants": {
+              "28": {"waist": "28 inches", "inseam": "30-32 inches"},
+              "30": {"waist": "30 inches", "inseam": "30-32 inches"},
+              "32": {"waist": "32 inches", "inseam": "30-32 inches"},
+              "34": {"waist": "34 inches", "inseam": "30-32 inches"},
+              "36": {"waist": "36 inches", "inseam": "30-32 inches"}
+            }
+          },
+          "women": {
+            "dresses": {
+              "XS": {"bust": "32-33 inches", "waist": "24-25 inches", "hips": "34-35 inches"},
+              "S": {"bust": "34-35 inches", "waist": "26-27 inches", "hips": "36-37 inches"},
+              "M": {"bust": "36-37 inches", "waist": "28-29 inches", "hips": "38-39 inches"},
+              "L": {"bust": "38-40 inches", "waist": "30-32 inches", "hips": "40-42 inches"},
+              "XL": {"bust": "42-44 inches", "waist": "34-36 inches", "hips": "44-46 inches"}
+            },
+            "tops": {
+              "XS": {"bust": "32-33 inches", "waist": "24-25 inches"},
+              "S": {"bust": "34-35 inches", "waist": "26-27 inches"},
+              "M": {"bust": "36-37 inches", "waist": "28-29 inches"},
+              "L": {"bust": "38-40 inches", "waist": "30-32 inches"},
+              "XL": {"bust": "42-44 inches", "waist": "34-36 inches"}
+            },
+            "pants": {
+              "0": {"waist": "24 inches", "hips": "34 inches"},
+              "2": {"waist": "25 inches", "hips": "35 inches"},
+              "4": {"waist": "26 inches", "hips": "36 inches"},
+              "6": {"waist": "27 inches", "hips": "37 inches"},
+              "8": {"waist": "28 inches", "hips": "38 inches"},
+              "10": {"waist": "30 inches", "hips": "40 inches"},
+              "12": {"waist": "32 inches", "hips": "42 inches"},
+              "14": {"waist": "34 inches", "hips": "44 inches"}
+            }
+          }
+        },
+        "fitting_advice": {
+          "measurement_guide": "Detailed measurement instructions provided for each product",
+          "fit_guarantee": "If item doesn't fit, free exchange or return within 30 days",
+          "virtual_try_on": "Virtual try-on available for select items using AR technology",
+          "stylist_consultation": "Free personal stylist consultation for size and fit questions"
+        }
+      }
+    },
+    "care_instructions": {
+      "id": "POL-010",
+      "title": "Care Instructions and Garment Care",
+      "category": "product_info",
+      "priority": "medium",
+      "content": {
+        "washing": {
+          "machine_wash": "Most items machine washable in cold water",
+          "hand_wash": "Delicate items require hand washing",
+          "dry_clean": "Some items require dry cleaning only",
+          "temperature": "Wash in cold water to preserve color and fabric"
+        },
+        "drying": {
+          "tumble_dry": "Most items can be tumble dried on low heat",
+          "air_dry": "Delicate items should be air dried",
+          "line_dry": "Some items should be line dried to prevent shrinking",
+          "no_dry": "Items marked 'do not tumble dry' must be air dried"
+        },
+        "ironing": {
+          "iron_settings": "Iron on appropriate heat setting based on fabric type",
+          "steam": "Steam ironing recommended for most fabrics",
+          "no_iron": "Some items should not be ironed"
+        },
+        "storage": {
+          "folding": "Most items can be folded for storage",
+          "hanging": "Some items should be hung to prevent wrinkles",
+          "climate": "Store in cool, dry place away from direct sunlight"
+        }
+      }
+    }
+  }
+}
+

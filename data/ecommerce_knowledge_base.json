@@ -1,67 +1,99 @@
 {
   "metadata": {
-    "version": "1.0",
+    "version": "2.0",
     "domain": "e-commerce",
     "last_updated": "2025-01-15",
-    "description": "Comprehensive e-commerce knowledge base covering policies, operations, and best practices"
+    "description": "Comprehensive industry-level e-commerce knowledge base with guardrails, policies, operations, and best practices",
+    "compliance": ["GDPR", "CCPA", "PCI-DSS", "SOC-2"],
+    "guardrails": {
+      "data_protection": "All customer data encrypted at rest and in transit",
+      "access_control": "Role-based access control with audit logging",
+      "rate_limiting": "API rate limits enforced to prevent abuse",
+      "input_validation": "All inputs validated and sanitized",
+      "error_handling": "Graceful error handling with no sensitive data exposure"
+    }
   },
   "policies": {
     "return_refund": {
       "id": "POL-001",
       "title": "Return and Refund Policy",
       "category": "customer_service",
+      "priority": "high",
       "content": {
         "return_window": "Customers have 30 days from the date of delivery to return items in original condition",
         "eligibility": [
           "Items must be unused, unwashed, and in original packaging",
           "Items with tags attached are eligible for return",
           "Personalized or customized items are non-returnable",
-          "Digital products are non-refundable unless defective"
+          "Digital products are non-refundable unless defective",
+          "Gift cards and vouchers are non-refundable",
+          "Items marked as 'Final Sale' cannot be returned"
         ],
         "refund_process": {
           "timeline": "Refunds processed within 5-7 business days after receiving returned item",
           "method": "Refunds issued to original payment method",
-          "shipping": "Original shipping costs are non-refundable unless item was defective or wrong item sent"
+          "shipping": "Original shipping costs are non-refundable unless item was defective or wrong item sent",
+          "restocking_fee": "No restocking fees for standard returns within return window"
         },
         "exceptions": [
           "Final sale items marked as 'No Returns'",
           "Items damaged by customer",
-          "Items returned after 30-day window"
-        ]
+          "Items returned after 30-day window",
+          "Items without proof of purchase",
+          "Items that have been used beyond normal inspection"
+        ],
+        "guardrails": {
+          "fraud_prevention": "Returns monitored for patterns indicating fraud",
+          "abuse_detection": "Excessive returns may result in account review",
+          "verification": "All returns require order number and verification"
+        }
       }
     },
     "shipping_delivery": {
       "id": "POL-002",
       "title": "Shipping and Delivery Policy",
       "category": "logistics",
+      "priority": "high",
       "content": {
         "shipping_methods": {
           "standard": {
             "duration": "5-7 business days",
             "cost": "Free for orders over $50, otherwise $5.99",
-            "tracking": "Included"
+            "tracking": "Included",
+            "insurance": "Included up to $100 value"
           },
           "express": {
             "duration": "2-3 business days",
             "cost": "$12.99",
-            "tracking": "Included with real-time updates"
+            "tracking": "Included with real-time updates",
+            "insurance": "Included up to $500 value"
           },
           "overnight": {
             "duration": "Next business day",
             "cost": "$24.99",
-            "tracking": "Priority tracking with delivery confirmation"
+            "tracking": "Priority tracking with delivery confirmation",
+            "insurance": "Included up to $1000 value"
           }
         },
         "international_shipping": {
           "available": true,
           "duration": "10-21 business days depending on destination",
           "cost": "Calculated at checkout based on weight and destination",
-          "customs": "Customer responsible for customs duties and taxes"
+          "customs": "Customer responsible for customs duties and taxes",
+          "restrictions": "Some items restricted by destination country",
+          "documentation": "All international shipments include customs documentation"
         },
         "delivery_issues": {
-          "lost_packages": "Contact support within 14 days of expected delivery",
-          "damaged_items": "Report within 48 hours with photos",
-          "wrong_address": "Customer responsible if address error, reshipment charges apply"
+          "lost_packages": "Contact support within 14 days of expected delivery for investigation",
+          "damaged_items": "Report within 48 hours with photos for replacement or refund",
+          "wrong_address": "Customer responsible if address error, reshipment charges apply",
+          "delayed_delivery": "Contact support if delivery exceeds estimated timeframe",
+          "signature_required": "High-value items require signature confirmation"
+        },
+        "guardrails": {
+          "address_validation": "All addresses validated before shipping",
+          "carrier_verification": "Only verified carriers used for shipping",
+          "tracking_required": "All shipments must have tracking numbers"
         }
       }
     },
@@ -69,41 +101,64 @@
       "id": "POL-003",
       "title": "Privacy and Data Protection Policy",
       "category": "legal",
+      "priority": "critical",
       "content": {
         "data_collection": {
           "personal_info": [
             "Name, email, phone number for account creation",
             "Shipping and billing addresses",
             "Payment information (encrypted, not stored)",
-            "Purchase history and preferences"
+            "Purchase history and preferences",
+            "Device information for security"
           ],
           "usage_data": [
             "Browsing behavior and product views",
             "Device information and IP address",
-            "Cookies and tracking technologies"
-          ]
+            "Cookies and tracking technologies",
+            "Search queries and filters used"
+          ],
+          "third_party": "We may share data with payment processors, shipping partners, and analytics providers"
         },
         "data_usage": [
           "Order processing and fulfillment",
           "Customer service and support",
           "Marketing communications (with consent)",
-          "Analytics and website improvement"
+          "Analytics and website improvement",
+          "Fraud prevention and security"
         ],
         "data_protection": {
-          "encryption": "All sensitive data encrypted using SSL/TLS",
-          "storage": "Data stored in secure, compliant databases",
-          "retention": "Data retained as required by law or business needs",
-          "rights": "Customers can request data access, deletion, or correction"
+          "encryption": "All sensitive data encrypted using SSL/TLS and AES-256",
+          "storage": "Data stored in secure, compliant databases with regular backups",
+          "retention": "Data retained as required by law or business needs, typically 7 years for financial records",
+          "deletion": "Data deleted upon request within 30 days, subject to legal requirements",
+          "rights": "Customers can request data access, deletion, or correction at any time"
         },
         "gdpr_compliance": {
           "applicable": true,
           "rights": [
             "Right to access personal data",
             "Right to rectification",
-            "Right to erasure",
+            "Right to erasure (right to be forgotten)",
             "Right to data portability",
-            "Right to object to processing"
+            "Right to object to processing",
+            "Right to restrict processing"
+          ],
+          "data_protection_officer": "DPO contact: privacy@ecommerce.com"
+        },
+        "ccpa_compliance": {
+          "applicable": true,
+          "rights": [
+            "Right to know what personal information is collected",
+            "Right to delete personal information",
+            "Right to opt-out of sale of personal information",
+            "Right to non-discrimination"
           ]
+        },
+        "guardrails": {
+          "access_control": "Role-based access with multi-factor authentication",
+          "audit_logging": "All data access logged and monitored",
+          "breach_protocol": "Data breach notification within 72 hours as required by law",
+          "minimal_data": "Only collect data necessary for business operations"
         }
       }
     },
@@ -111,31 +166,42 @@
       "id": "POL-004",
       "title": "Payment and Security Policy",
       "category": "financial",
+      "priority": "critical",
       "content": {
         "accepted_methods": [
-          "Credit cards (Visa, MasterCard, American Express)",
+          "Credit cards (Visa, MasterCard, American Express, Discover)",
           "Debit cards",
           "PayPal",
           "Apple Pay",
           "Google Pay",
-          "Cryptocurrency (Bitcoin, Ethereum) for select products"
+          "Cryptocurrency (Bitcoin, Ethereum) for select products",
+          "Bank transfers (for large orders)"
         ],
         "security_measures": {
           "pci_compliance": "PCI DSS Level 1 certified",
-          "encryption": "End-to-end encryption for all transactions",
-          "fraud_detection": "AI-powered fraud detection system",
-          "two_factor": "Optional 2FA for account security"
+          "encryption": "End-to-end encryption for all transactions using TLS 1.3",
+          "fraud_detection": "AI-powered fraud detection system with real-time monitoring",
+          "two_factor": "Optional 2FA for account security",
+          "tokenization": "Payment data tokenized, never stored in plain text",
+          "3d_secure": "3D Secure authentication enabled for additional security"
         },
         "payment_processing": {
           "authorization": "Payment authorized at checkout",
           "capture": "Payment captured upon order confirmation",
-          "failed_payments": "Automatic retry for failed transactions",
-          "refunds": "Processed within 5-7 business days"
+          "failed_payments": "Automatic retry for failed transactions (max 3 attempts)",
+          "refunds": "Processed within 5-7 business days",
+          "chargebacks": "Chargeback disputes handled within 30 days"
         },
         "currency": {
           "default": "USD",
-          "supported": ["USD", "EUR", "GBP", "CAD", "AUD", "JPY"],
-          "conversion": "Real-time exchange rates applied"
+          "supported": ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CNY"],
+          "conversion": "Real-time exchange rates applied at checkout"
+        },
+        "guardrails": {
+          "transaction_limits": "Daily transaction limits enforced per account",
+          "suspicious_activity": "Suspicious transactions flagged and reviewed",
+          "card_verification": "CVV and billing address verification required",
+          "rate_limiting": "Payment attempts rate-limited to prevent abuse"
         }
       }
     },
@@ -143,23 +209,32 @@
       "id": "POL-005",
       "title": "Product Quality and Authenticity",
       "category": "quality_assurance",
+      "priority": "high",
       "content": {
         "authenticity_guarantee": {
           "verified_sellers": "All products from verified, authenticated sellers",
           "certification": "Products come with authenticity certificates where applicable",
-          "inspection": "Random quality inspections conducted"
+          "inspection": "Random quality inspections conducted on 10% of inventory",
+          "third_party_verification": "High-value items verified by third-party authenticators"
         },
         "quality_standards": {
-          "new_items": "Brand new, factory-sealed items",
-          "used_items": "Clearly marked with condition rating (Excellent, Good, Fair)",
+          "new_items": "Brand new, factory-sealed items with manufacturer warranty",
+          "used_items": "Clearly marked with condition rating (Excellent, Good, Fair, Poor)",
           "defects": "Defective items replaced or refunded immediately",
-          "warranty": "Manufacturer warranty applies to eligible products"
+          "warranty": "Manufacturer warranty applies to eligible products, extended warranty available",
+          "recalls": "Product recalls handled immediately with customer notification"
         },
         "product_information": {
-          "descriptions": "Accurate, detailed product descriptions",
-          "images": "High-resolution images from multiple angles",
+          "descriptions": "Accurate, detailed product descriptions with specifications",
+          "images": "High-resolution images from multiple angles (minimum 5 images)",
           "specifications": "Complete technical specifications provided",
-          "reviews": "Customer reviews and ratings displayed"
+          "reviews": "Customer reviews and ratings displayed (verified purchases only)",
+          "disclaimers": "Clear disclaimers for refurbished or used items"
+        },
+        "guardrails": {
+          "misrepresentation": "False product descriptions result in immediate removal",
+          "counterfeit_detection": "AI-powered counterfeit detection for high-risk categories",
+          "seller_verification": "All sellers must pass identity and business verification"
         }
       }
     },
@@ -167,25 +242,35 @@
       "id": "POL-006",
       "title": "Customer Service Standards",
       "category": "customer_service",
+      "priority": "high",
       "content": {
         "availability": {
           "hours": "24/7 customer support via chat, email, and phone",
           "response_time": {
-            "chat": "Average response time: 2 minutes",
-            "email": "Response within 24 hours",
-            "phone": "Immediate assistance during business hours"
-          }
+            "chat": "Average response time: 2 minutes, maximum 5 minutes",
+            "email": "Response within 24 hours, typically within 4 hours",
+            "phone": "Immediate assistance during business hours (9 AM - 9 PM EST)",
+            "social_media": "Response within 2 hours during business hours"
+          },
+          "languages": "Support available in English, Spanish, French, and Mandarin"
         },
         "support_channels": [
-          "Live chat on website",
+          "Live chat on website (24/7)",
           "Email: support@ecommerce.com",
-          "Phone: 1-800-ECOMMERCE",
-          "Social media: @ecommerce_support"
+          "Phone: 1-800-ECOMMERCE (toll-free)",
+          "Social media: @ecommerce_support",
+          "Help center with self-service options"
         ],
         "service_guarantee": {
-          "satisfaction": "100% satisfaction guarantee or money back",
-          "resolution": "Issues resolved within 48 hours",
-          "escalation": "Complex issues escalated to senior support team"
+          "satisfaction": "100% satisfaction guarantee or money back within 30 days",
+          "resolution": "Issues resolved within 48 hours, complex issues within 7 days",
+          "escalation": "Complex issues escalated to senior support team within 24 hours",
+          "compensation": "Service failures may result in account credit or discount"
+        },
+        "guardrails": {
+          "abuse_prevention": "Abusive behavior toward support staff may result in account suspension",
+          "verification": "Account verification required for sensitive operations",
+          "escalation_criteria": "Clear escalation paths for unresolved issues"
         }
       }
     },
@@ -193,29 +278,41 @@
       "id": "POL-007",
       "title": "Loyalty and Rewards Program",
       "category": "marketing",
+      "priority": "medium",
       "content": {
         "membership_tiers": {
           "bronze": {
             "points_rate": "1 point per $1 spent",
-            "benefits": ["Birthday discount", "Early access to sales"]
+            "benefits": ["Birthday discount (10%)", "Early access to sales", "Newsletter subscription"],
+            "minimum_spend": "$0"
           },
           "silver": {
             "points_rate": "1.5 points per $1 spent",
-            "benefits": ["Free standard shipping", "Exclusive deals", "Priority support"]
+            "benefits": ["Free standard shipping", "Exclusive deals (15% off)", "Priority support", "Birthday discount (15%)"],
+            "minimum_spend": "$500 annually"
           },
           "gold": {
             "points_rate": "2 points per $1 spent",
-            "benefits": ["Free express shipping", "VIP events", "Personal shopper"]
+            "benefits": ["Free express shipping", "VIP events access", "Personal shopper", "Birthday discount (20%)", "Early product launches"],
+            "minimum_spend": "$2000 annually"
           },
           "platinum": {
             "points_rate": "3 points per $1 spent",
-            "benefits": ["All Gold benefits", "Concierge service", "Custom products"]
+            "benefits": ["All Gold benefits", "Concierge service", "Custom products", "Birthday discount (25%)", "Exclusive products"],
+            "minimum_spend": "$5000 annually"
           }
         },
         "redemption": {
           "minimum": "500 points required for redemption",
           "value": "100 points = $1 discount",
-          "expiration": "Points expire after 12 months of inactivity"
+          "expiration": "Points expire after 12 months of inactivity",
+          "transfer": "Points non-transferable except to family accounts",
+          "restrictions": "Points cannot be used with certain promotional codes"
+        },
+        "guardrails": {
+          "fraud_prevention": "Points earned from fraudulent transactions will be revoked",
+          "abuse_detection": "Unusual point accumulation patterns monitored",
+          "terms_enforcement": "Program terms subject to change with 30-day notice"
         }
       }
     },
@@ -223,22 +320,31 @@
       "id": "POL-008",
       "title": "Inventory and Stock Management",
       "category": "operations",
+      "priority": "high",
       "content": {
         "stock_status": {
           "in_stock": "Available for immediate shipping",
-          "low_stock": "Limited quantity available",
+          "low_stock": "Limited quantity available (less than 10 units)",
           "out_of_stock": "Currently unavailable, backorder option available",
-          "pre_order": "Available for pre-order, ships on release date"
+          "pre_order": "Available for pre-order, ships on release date",
+          "discontinued": "Product no longer available, no restock planned"
         },
         "restocking": {
-          "frequency": "Daily inventory updates",
+          "frequency": "Daily inventory updates, real-time for high-demand items",
           "notifications": "Email alerts when out-of-stock items become available",
-          "backorders": "Backorders accepted with estimated restock date"
+          "backorders": "Backorders accepted with estimated restock date (typically 2-4 weeks)",
+          "cancellation": "Backorders can be cancelled with full refund if not yet shipped"
         },
         "pricing": {
-          "dynamic": "Prices may change based on market conditions",
-          "price_match": "Price match guarantee within 30 days of purchase",
-          "discounts": "Automatic application of applicable discounts and coupons"
+          "dynamic": "Prices may change based on market conditions and demand",
+          "price_match": "Price match guarantee within 30 days of purchase (for authorized retailers)",
+          "discounts": "Automatic application of applicable discounts and coupons",
+          "price_drops": "Price drop protection: refund difference if price drops within 7 days"
+        },
+        "guardrails": {
+          "inventory_accuracy": "Regular inventory audits to ensure accuracy",
+          "overselling_prevention": "Real-time inventory checks prevent overselling",
+          "price_errors": "Price errors honored but may be corrected for future orders"
         }
       }
     },
@@ -246,48 +352,134 @@
       "id": "POL-009",
       "title": "Seller and Vendor Policies",
       "category": "vendor_relations",
+      "priority": "high",
       "content": {
         "seller_requirements": {
-          "verification": "Identity and business verification required",
-          "documentation": "Business license, tax ID, and bank account verification",
-          "quality_standards": "Must meet platform quality and service standards"
+          "verification": "Identity and business verification required (government ID, business license)",
+          "documentation": "Business license, tax ID, and bank account verification required",
+          "quality_standards": "Must meet platform quality and service standards (4.0+ rating)",
+          "insurance": "Product liability insurance required for sellers over $100k annual sales",
+          "background_check": "Background check required for high-value sellers"
         },
         "commission_structure": {
           "standard": "15% commission on all sales",
-          "premium": "10% commission for premium sellers with high ratings",
-          "payment": "Payments processed bi-weekly"
+          "premium": "10% commission for premium sellers with high ratings (4.5+ stars, 1000+ sales)",
+          "payment": "Payments processed bi-weekly, daily for premium sellers",
+          "fees": "Transaction fees: 2.9% + $0.30 per transaction"
         },
         "seller_obligations": [
-          "Accurate product listings",
-          "Timely order fulfillment",
-          "Responsive customer service",
-          "Compliance with all platform policies"
-        ]
+          "Accurate product listings with clear descriptions",
+          "Timely order fulfillment (within 2 business days)",
+          "Responsive customer service (24-hour response time)",
+          "Compliance with all platform policies",
+          "Regular inventory updates",
+          "Quality product packaging"
+        ],
+        "guardrails": {
+          "suspension_criteria": "Sellers may be suspended for policy violations, low ratings, or fraud",
+          "appeal_process": "Sellers can appeal suspensions within 30 days",
+          "performance_monitoring": "Seller performance monitored monthly"
+        }
       }
     },
     "dispute_resolution": {
       "id": "POL-010",
       "title": "Dispute Resolution and Arbitration",
       "category": "legal",
+      "priority": "high",
       "content": {
         "process": {
-          "step1": "Direct communication between parties encouraged",
-          "step2": "Platform mediation available upon request",
-          "step3": "Formal dispute filing with documentation",
-          "step4": "Arbitration if mediation fails"
+          "step1": "Direct communication between parties encouraged (7 days)",
+          "step2": "Platform mediation available upon request (7-14 days)",
+          "step3": "Formal dispute filing with documentation (14 days)",
+          "step4": "Arbitration if mediation fails (30-45 days)",
+          "step5": "Appeal process available (15 days)"
         },
         "timeline": {
           "mediation": "Mediation process: 7-14 business days",
           "arbitration": "Arbitration: 30-45 business days",
-          "appeal": "Appeal process: 15 business days"
+          "appeal": "Appeal process: 15 business days",
+          "total_maximum": "Maximum 90 days from dispute filing to resolution"
         },
         "resolution_types": [
           "Full refund",
-          "Partial refund",
-          "Replacement",
+          "Partial refund (percentage or amount)",
+          "Replacement with same or similar item",
           "Store credit",
-          "No action required"
-        ]
+          "No action required (dispute dismissed)",
+          "Seller compensation"
+        ],
+        "guardrails": {
+          "evidence_required": "All disputes require supporting evidence (photos, documents)",
+          "abuse_prevention": "Frequent dispute filers may be subject to account review",
+          "neutral_mediation": "Mediators are neutral third parties",
+          "binding_arbitration": "Arbitration decisions are binding for both parties"
+        }
+      }
+    },
+    "security_guardrails": {
+      "id": "POL-011",
+      "title": "Security Guardrails and Best Practices",
+      "category": "security",
+      "priority": "critical",
+      "content": {
+        "authentication": {
+          "password_policy": "Minimum 8 characters, must include uppercase, lowercase, number, and special character",
+          "2fa_required": "2FA required for high-value transactions and account changes",
+          "session_management": "Sessions expire after 30 minutes of inactivity, maximum 24 hours",
+          "login_attempts": "Account locked after 5 failed login attempts, unlock via email"
+        },
+        "data_protection": {
+          "encryption": "All data encrypted at rest (AES-256) and in transit (TLS 1.3)",
+          "pii_handling": "PII data minimized and only accessed when necessary",
+          "data_retention": "Data retained only as long as necessary for business purposes",
+          "backup_security": "Regular encrypted backups with 30-day retention"
+        },
+        "api_security": {
+          "rate_limiting": "API rate limits: 100 requests per minute per IP, 1000 per hour",
+          "authentication": "API requires authentication token with expiration",
+          "input_validation": "All API inputs validated and sanitized",
+          "error_handling": "Errors do not expose sensitive information"
+        },
+        "monitoring": {
+          "intrusion_detection": "24/7 security monitoring with automated alerts",
+          "anomaly_detection": "AI-powered anomaly detection for suspicious activities",
+          "audit_logging": "All security events logged and retained for 1 year",
+          "incident_response": "Security incidents responded to within 1 hour"
+        }
+      }
+    },
+    "content_moderation": {
+      "id": "POL-012",
+      "title": "Content Moderation and Community Guidelines",
+      "category": "moderation",
+      "priority": "medium",
+      "content": {
+        "prohibited_content": [
+          "Hate speech, discrimination, or harassment",
+          "Spam, scams, or fraudulent listings",
+          "Intellectual property violations",
+          "Illegal products or services",
+          "Misleading or false information",
+          "Adult content (unless in appropriate category)"
+        ],
+        "review_process": {
+          "automated": "AI-powered content moderation for initial screening",
+          "human_review": "Human review for flagged content within 24 hours",
+          "appeal": "Content creators can appeal moderation decisions",
+          "escalation": "Complex cases escalated to moderation team"
+        },
+        "enforcement": {
+          "warnings": "First violation: warning and content removal",
+          "suspension": "Repeated violations: temporary account suspension (7-30 days)",
+          "ban": "Severe or repeated violations: permanent account ban",
+          "legal_action": "Illegal content reported to authorities"
+        },
+        "guardrails": {
+          "bias_prevention": "Moderation algorithms tested for bias",
+          "transparency": "Clear guidelines published and regularly updated",
+          "appeal_rights": "Users have right to appeal moderation decisions"
+        }
       }
     }
   },
@@ -302,7 +494,9 @@
       "Toys & Games",
       "Automotive",
       "Food & Beverages",
-      "Pet Supplies"
+      "Pet Supplies",
+      "Jewelry & Watches",
+      "Musical Instruments"
     ],
     "order_statuses": [
       "Pending",
@@ -311,7 +505,9 @@
       "Delivered",
       "Cancelled",
       "Returned",
-      "Refunded"
+      "Refunded",
+      "On Hold",
+      "Backordered"
     ],
     "payment_statuses": [
       "Pending",
@@ -319,7 +515,8 @@
       "Captured",
       "Failed",
       "Refunded",
-      "Partially Refunded"
+      "Partially Refunded",
+      "Chargeback"
     ],
     "shipping_carriers": [
       "FedEx",
@@ -327,6 +524,12 @@
       "USPS",
       "DHL",
       "Amazon Logistics"
+    ],
+    "risk_levels": [
+      "Low",
+      "Medium",
+      "High",
+      "Critical"
     ]
   },
   "relationships": {
@@ -336,13 +539,37 @@
       {"from": "shipping_delivery", "to": "inventory_management", "relation": "depends_on", "strength": 0.6},
       {"from": "payment_security", "to": "privacy_data", "relation": "related_to", "strength": 0.9},
       {"from": "customer_service", "to": "dispute_resolution", "relation": "escalates_to", "strength": 0.8},
-      {"from": "loyalty_rewards", "to": "customer_service", "relation": "enhances", "strength": 0.7}
+      {"from": "loyalty_rewards", "to": "customer_service", "relation": "enhances", "strength": 0.7},
+      {"from": "security_guardrails", "to": "payment_security", "relation": "enforces", "strength": 0.9},
+      {"from": "security_guardrails", "to": "privacy_data", "relation": "enforces", "strength": 0.9},
+      {"from": "content_moderation", "to": "product_quality", "relation": "supports", "strength": 0.7}
     ],
     "entity_connections": [
       {"from": "Electronics", "to": "return_refund", "relation": "governed_by", "strength": 0.9},
       {"from": "Clothing & Apparel", "to": "return_refund", "relation": "governed_by", "strength": 0.9},
-      {"from": "order_statuses", "to": "shipping_delivery", "relation": "tracked_by", "strength": 0.8}
+      {"from": "order_statuses", "to": "shipping_delivery", "relation": "tracked_by", "strength": 0.8},
+      {"from": "risk_levels", "to": "security_guardrails", "relation": "triggers", "strength": 0.8}
     ]
+  },
+  "guardrails": {
+    "system_level": {
+      "input_validation": "All user inputs validated and sanitized before processing",
+      "output_filtering": "All outputs filtered to prevent injection attacks",
+      "error_handling": "Errors handled gracefully without exposing system internals",
+      "logging": "Comprehensive logging of all operations for audit and debugging",
+      "monitoring": "Real-time monitoring of system health and performance"
+    },
+    "business_level": {
+      "fraud_prevention": "Multi-layer fraud detection and prevention",
+      "abuse_detection": "Pattern detection for abusive behavior",
+      "rate_limiting": "Rate limits enforced to prevent abuse",
+      "access_control": "Role-based access control with principle of least privilege"
+    },
+    "compliance_level": {
+      "gdpr": "Full GDPR compliance with data subject rights",
+      "ccpa": "CCPA compliance for California residents",
+      "pci_dss": "PCI DSS Level 1 compliance for payment processing",
+      "soc2": "SOC 2 Type II certified for security and availability"
+    }
   }
 }
-

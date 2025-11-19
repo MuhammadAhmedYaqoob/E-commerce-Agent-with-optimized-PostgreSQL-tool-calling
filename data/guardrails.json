@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "domain": "e-commerce",
+    "category": "guardrails",
+    "last_updated": "2025-01-15"
+  },
+  "guardrails": {
+    "system_level": {
+      "input_validation": "All user inputs validated and sanitized before processing",
+      "output_filtering": "All outputs filtered to prevent injection attacks",
+      "error_handling": "Errors handled gracefully without exposing system internals",
+      "logging": "Comprehensive logging of all operations for audit and debugging",
+      "monitoring": "Real-time monitoring of system health and performance"
+    },
+    "business_level": {
+      "fraud_prevention": "Multi-layer fraud detection and prevention",
+      "abuse_detection": "Pattern detection for abusive behavior",
+      "rate_limiting": "Rate limits enforced to prevent abuse",
+      "access_control": "Role-based access control with principle of least privilege"
+    },
+    "compliance_level": {
+      "gdpr": "Full GDPR compliance with data subject rights",
+      "ccpa": "CCPA compliance for California residents",
+      "pci_dss": "PCI DSS Level 1 compliance for payment processing",
+      "soc2": "SOC 2 Type II certified for security and availability"
+    },
+    "agent_specific": {
+      "state_management": "Agent state maintained across conversations",
+      "memory_persistence": "Conversation history stored for context",
+      "tool_validation": "All tool calls validated before execution",
+      "response_safety": "All responses checked for safety and appropriateness",
+      "context_window": "Context window managed to prevent token overflow"
+    }
+  }
+}
+
