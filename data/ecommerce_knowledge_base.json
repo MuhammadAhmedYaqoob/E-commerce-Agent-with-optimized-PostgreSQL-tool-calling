@@ -1,0 +1,348 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "domain": "e-commerce",
+    "last_updated": "2025-01-15",
+    "description": "Comprehensive e-commerce knowledge base covering policies, operations, and best practices"
+  },
+  "policies": {
+    "return_refund": {
+      "id": "POL-001",
+      "title": "Return and Refund Policy",
+      "category": "customer_service",
+      "content": {
+        "return_window": "Customers have 30 days from the date of delivery to return items in original condition",
+        "eligibility": [
+          "Items must be unused, unwashed, and in original packaging",
+          "Items with tags attached are eligible for return",
+          "Personalized or customized items are non-returnable",
+          "Digital products are non-refundable unless defective"
+        ],
+        "refund_process": {
+          "timeline": "Refunds processed within 5-7 business days after receiving returned item",
+          "method": "Refunds issued to original payment method",
+          "shipping": "Original shipping costs are non-refundable unless item was defective or wrong item sent"
+        },
+        "exceptions": [
+          "Final sale items marked as 'No Returns'",
+          "Items damaged by customer",
+          "Items returned after 30-day window"
+        ]
+      }
+    },
+    "shipping_delivery": {
+      "id": "POL-002",
+      "title": "Shipping and Delivery Policy",
+      "category": "logistics",
+      "content": {
+        "shipping_methods": {
+          "standard": {
+            "duration": "5-7 business days",
+            "cost": "Free for orders over $50, otherwise $5.99",
+            "tracking": "Included"
+          },
+          "express": {
+            "duration": "2-3 business days",
+            "cost": "$12.99",
+            "tracking": "Included with real-time updates"
+          },
+          "overnight": {
+            "duration": "Next business day",
+            "cost": "$24.99",
+            "tracking": "Priority tracking with delivery confirmation"
+          }
+        },
+        "international_shipping": {
+          "available": true,
+          "duration": "10-21 business days depending on destination",
+          "cost": "Calculated at checkout based on weight and destination",
+          "customs": "Customer responsible for customs duties and taxes"
+        },
+        "delivery_issues": {
+          "lost_packages": "Contact support within 14 days of expected delivery",
+          "damaged_items": "Report within 48 hours with photos",
+          "wrong_address": "Customer responsible if address error, reshipment charges apply"
+        }
+      }
+    },
+    "privacy_data": {
+      "id": "POL-003",
+      "title": "Privacy and Data Protection Policy",
+      "category": "legal",
+      "content": {
+        "data_collection": {
+          "personal_info": [
+            "Name, email, phone number for account creation",
+            "Shipping and billing addresses",
+            "Payment information (encrypted, not stored)",
+            "Purchase history and preferences"
+          ],
+          "usage_data": [
+            "Browsing behavior and product views",
+            "Device information and IP address",
+            "Cookies and tracking technologies"
+          ]
+        },
+        "data_usage": [
+          "Order processing and fulfillment",
+          "Customer service and support",
+          "Marketing communications (with consent)",
+          "Analytics and website improvement"
+        ],
+        "data_protection": {
+          "encryption": "All sensitive data encrypted using SSL/TLS",
+          "storage": "Data stored in secure, compliant databases",
+          "retention": "Data retained as required by law or business needs",
+          "rights": "Customers can request data access, deletion, or correction"
+        },
+        "gdpr_compliance": {
+          "applicable": true,
+          "rights": [
+            "Right to access personal data",
+            "Right to rectification",
+            "Right to erasure",
+            "Right to data portability",
+            "Right to object to processing"
+          ]
+        }
+      }
+    },
+    "payment_security": {
+      "id": "POL-004",
+      "title": "Payment and Security Policy",
+      "category": "financial",
+      "content": {
+        "accepted_methods": [
+          "Credit cards (Visa, MasterCard, American Express)",
+          "Debit cards",
+          "PayPal",
+          "Apple Pay",
+          "Google Pay",
+          "Cryptocurrency (Bitcoin, Ethereum) for select products"
+        ],
+        "security_measures": {
+          "pci_compliance": "PCI DSS Level 1 certified",
+          "encryption": "End-to-end encryption for all transactions",
+          "fraud_detection": "AI-powered fraud detection system",
+          "two_factor": "Optional 2FA for account security"
+        },
+        "payment_processing": {
+          "authorization": "Payment authorized at checkout",
+          "capture": "Payment captured upon order confirmation",
+          "failed_payments": "Automatic retry for failed transactions",
+          "refunds": "Processed within 5-7 business days"
+        },
+        "currency": {
+          "default": "USD",
+          "supported": ["USD", "EUR", "GBP", "CAD", "AUD", "JPY"],
+          "conversion": "Real-time exchange rates applied"
+        }
+      }
+    },
+    "product_quality": {
+      "id": "POL-005",
+      "title": "Product Quality and Authenticity",
+      "category": "quality_assurance",
+      "content": {
+        "authenticity_guarantee": {
+          "verified_sellers": "All products from verified, authenticated sellers",
+          "certification": "Products come with authenticity certificates where applicable",
+          "inspection": "Random quality inspections conducted"
+        },
+        "quality_standards": {
+          "new_items": "Brand new, factory-sealed items",
+          "used_items": "Clearly marked with condition rating (Excellent, Good, Fair)",
+          "defects": "Defective items replaced or refunded immediately",
+          "warranty": "Manufacturer warranty applies to eligible products"
+        },
+        "product_information": {
+          "descriptions": "Accurate, detailed product descriptions",
+          "images": "High-resolution images from multiple angles",
+          "specifications": "Complete technical specifications provided",
+          "reviews": "Customer reviews and ratings displayed"
+        }
+      }
+    },
+    "customer_service": {
+      "id": "POL-006",
+      "title": "Customer Service Standards",
+      "category": "customer_service",
+      "content": {
+        "availability": {
+          "hours": "24/7 customer support via chat, email, and phone",
+          "response_time": {
+            "chat": "Average response time: 2 minutes",
+            "email": "Response within 24 hours",
+            "phone": "Immediate assistance during business hours"
+          }
+        },
+        "support_channels": [
+          "Live chat on website",
+          "Email: support@ecommerce.com",
+          "Phone: 1-800-ECOMMERCE",
+          "Social media: @ecommerce_support"
+        ],
+        "service_guarantee": {
+          "satisfaction": "100% satisfaction guarantee or money back",
+          "resolution": "Issues resolved within 48 hours",
+          "escalation": "Complex issues escalated to senior support team"
+        }
+      }
+    },
+    "loyalty_rewards": {
+      "id": "POL-007",
+      "title": "Loyalty and Rewards Program",
+      "category": "marketing",
+      "content": {
+        "membership_tiers": {
+          "bronze": {
+            "points_rate": "1 point per $1 spent",
+            "benefits": ["Birthday discount", "Early access to sales"]
+          },
+          "silver": {
+            "points_rate": "1.5 points per $1 spent",
+            "benefits": ["Free standard shipping", "Exclusive deals", "Priority support"]
+          },
+          "gold": {
+            "points_rate": "2 points per $1 spent",
+            "benefits": ["Free express shipping", "VIP events", "Personal shopper"]
+          },
+          "platinum": {
+            "points_rate": "3 points per $1 spent",
+            "benefits": ["All Gold benefits", "Concierge service", "Custom products"]
+          }
+        },
+        "redemption": {
+          "minimum": "500 points required for redemption",
+          "value": "100 points = $1 discount",
+          "expiration": "Points expire after 12 months of inactivity"
+        }
+      }
+    },
+    "inventory_management": {
+      "id": "POL-008",
+      "title": "Inventory and Stock Management",
+      "category": "operations",
+      "content": {
+        "stock_status": {
+          "in_stock": "Available for immediate shipping",
+          "low_stock": "Limited quantity available",
+          "out_of_stock": "Currently unavailable, backorder option available",
+          "pre_order": "Available for pre-order, ships on release date"
+        },
+        "restocking": {
+          "frequency": "Daily inventory updates",
+          "notifications": "Email alerts when out-of-stock items become available",
+          "backorders": "Backorders accepted with estimated restock date"
+        },
+        "pricing": {
+          "dynamic": "Prices may change based on market conditions",
+          "price_match": "Price match guarantee within 30 days of purchase",
+          "discounts": "Automatic application of applicable discounts and coupons"
+        }
+      }
+    },
+    "seller_vendor": {
+      "id": "POL-009",
+      "title": "Seller and Vendor Policies",
+      "category": "vendor_relations",
+      "content": {
+        "seller_requirements": {
+          "verification": "Identity and business verification required",
+          "documentation": "Business license, tax ID, and bank account verification",
+          "quality_standards": "Must meet platform quality and service standards"
+        },
+        "commission_structure": {
+          "standard": "15% commission on all sales",
+          "premium": "10% commission for premium sellers with high ratings",
+          "payment": "Payments processed bi-weekly"
+        },
+        "seller_obligations": [
+          "Accurate product listings",
+          "Timely order fulfillment",
+          "Responsive customer service",
+          "Compliance with all platform policies"
+        ]
+      }
+    },
+    "dispute_resolution": {
+      "id": "POL-010",
+      "title": "Dispute Resolution and Arbitration",
+      "category": "legal",
+      "content": {
+        "process": {
+          "step1": "Direct communication between parties encouraged",
+          "step2": "Platform mediation available upon request",
+          "step3": "Formal dispute filing with documentation",
+          "step4": "Arbitration if mediation fails"
+        },
+        "timeline": {
+          "mediation": "Mediation process: 7-14 business days",
+          "arbitration": "Arbitration: 30-45 business days",
+          "appeal": "Appeal process: 15 business days"
+        },
+        "resolution_types": [
+          "Full refund",
+          "Partial refund",
+          "Replacement",
+          "Store credit",
+          "No action required"
+        ]
+      }
+    }
+  },
+  "entities": {
+    "product_categories": [
+      "Electronics",
+      "Clothing & Apparel",
+      "Home & Garden",
+      "Sports & Outdoors",
+      "Books & Media",
+      "Health & Beauty",
+      "Toys & Games",
+      "Automotive",
+      "Food & Beverages",
+      "Pet Supplies"
+    ],
+    "order_statuses": [
+      "Pending",
+      "Processing",
+      "Shipped",
+      "Delivered",
+      "Cancelled",
+      "Returned",
+      "Refunded"
+    ],
+    "payment_statuses": [
+      "Pending",
+      "Authorized",
+      "Captured",
+      "Failed",
+      "Refunded",
+      "Partially Refunded"
+    ],
+    "shipping_carriers": [
+      "FedEx",
+      "UPS",
+      "USPS",
+      "DHL",
+      "Amazon Logistics"
+    ]
+  },
+  "relationships": {
+    "policy_connections": [
+      {"from": "return_refund", "to": "shipping_delivery", "relation": "related_to", "strength": 0.8},
+      {"from": "return_refund", "to": "payment_security", "relation": "related_to", "strength": 0.7},
+      {"from": "shipping_delivery", "to": "inventory_management", "relation": "depends_on", "strength": 0.6},
+      {"from": "payment_security", "to": "privacy_data", "relation": "related_to", "strength": 0.9},
+      {"from": "customer_service", "to": "dispute_resolution", "relation": "escalates_to", "strength": 0.8},
+      {"from": "loyalty_rewards", "to": "customer_service", "relation": "enhances", "strength": 0.7}
+    ],
+    "entity_connections": [
+      {"from": "Electronics", "to": "return_refund", "relation": "governed_by", "strength": 0.9},
+      {"from": "Clothing & Apparel", "to": "return_refund", "relation": "governed_by", "strength": 0.9},
+      {"from": "order_statuses", "to": "shipping_delivery", "relation": "tracked_by", "strength": 0.8}
+    ]
+  }
+}
+
