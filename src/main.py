@@ -1,34 +1,36 @@
+"""
+CLI Entry Point for E-Commerce MiniRAG System
+"""
 import argparse
-from .graph_indexer import build_graph
-from .retriever import build_faiss, query_semantic
-from .generator import answer
+from .minirag.graph_builder import MiniRAGGraphBuilder
+from .agent.ecommerce_agent import ECommerceAgent
 
 def cli():
-    p = argparse.ArgumentParser("SFDA-RAG")
-    p.add_argument("--index", action="store_true", help="Build graph + FAISS indices")
-    p.add_argument("--query", type=str, help="Ask a question")
-    p.add_argument("--k", type=int, default=5, help="Number of results to retrieve")
-    args = p.parse_args()
-
-    if args.index:
-        print("🔄 Building knowledge graph...")
-        build_graph()
-        print("🔄 Building semantic index...")
-        build_faiss()
-        print("✅ All indices built successfully.")
-
+    """Command-line interface"""
+    parser = argparse.ArgumentParser("E-Commerce MiniRAG Agentic System")
+    parser.add_argument("--build-graph", action="store_true", help="Build MiniRAG graph")
+    parser.add_argument("--query", type=str, help="Ask a question")
+    parser.add_argument("--email", type=str, help="User email (optional)")
+    args = parser.parse_args()
+    
+    if args.build_graph:
+        print("🔄 Building MiniRAG graph (PRIMARY index)...")
+        builder = MiniRAGGraphBuilder()
+        graph_path = builder.build_graph()
+        if graph_path:
+            graph = builder.get_graph()
+            print(f"✅ Graph built: {graph.number_of_nodes()} nodes, {graph.number_of_edges()} edges")
+        else:
+            print("❌ Failed to build graph")
+    
     if args.query:
-        print(f"🔎 Searching: {args.query}")
-        hits = query_semantic(args.query, k=args.k)
+        print(f"🔎 Processing query: {args.query}")
+        agent = ECommerceAgent()
+        result = agent.process_query(query=args.query, user_email=args.email)
         
-        if not hits:
-            print("❌ No relevant information found.")
-            return
-            
-        print(f"📄 Found {len(hits)} relevant documents")
-        response = answer(args.query, hits)
-        print("\n🇸🇦 Answer:")
-        print(response)
+        print("\n💡 Answer:")
+        print(result["answer"])
+        print(f"\n📊 Metadata: {result['iterations']} iterations, {result['tool_usage']} tools used")
 
 if __name__ == "__main__":
     cli()
