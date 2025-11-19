@@ -13,10 +13,20 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 if not OPENAI_API_KEY:
     print("[WARNING] OpenAI API key not found. Set OPENAI_API_KEY in your .env file.")
 
+# Database Configuration - Choose Supabase or Local PostgreSQL
+USE_SUPABASE = os.environ.get("USE_SUPABASE", "False").lower() == "true"
+
 # Supabase Configuration
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
+
+# Local PostgreSQL Configuration
+LOCAL_DB_HOST = os.environ.get("LOCAL_DB_HOST", "localhost")
+LOCAL_DB_PORT = int(os.environ.get("LOCAL_DB_PORT", "5432"))
+LOCAL_DB_NAME = os.environ.get("LOCAL_DB_NAME", "ecommerce_db")
+LOCAL_DB_USER = os.environ.get("LOCAL_DB_USER", "postgres")
+LOCAL_DB_PASSWORD = os.environ.get("LOCAL_DB_PASSWORD", "datalens")
 
 # Gmail Configuration
 GMAIL_USER = os.environ.get("GMAIL_USER", "")

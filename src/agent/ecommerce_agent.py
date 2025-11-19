@@ -13,7 +13,7 @@ import operator
 from ..config import OPENAI_API_KEY, LLM_MODEL, AGENT_SYSTEM_PROMPT, MAX_ITERATIONS
 from ..minirag.graph_retriever import MiniRAGRetriever
 from ..tools.gmail_tool import GmailTool
-from ..tools.supabase_tool import SupabaseTool
+from ..tools.database_tool import DatabaseTool
 from ..generator import generate_answer
 from .planning import PlanningModule
 
@@ -41,7 +41,7 @@ class ECommerceAgent:
         )
         self.retriever = MiniRAGRetriever()
         self.gmail_tool = GmailTool()
-        self.supabase_tool = SupabaseTool()
+        self.database_tool = DatabaseTool()  # Unified database tool (Supabase or Local PostgreSQL)
         self.planning_module = PlanningModule()  # Explicit planning
         
         # Define tools
@@ -97,7 +97,7 @@ class ECommerceAgent:
             Returns:
                 Order information as JSON string
             """
-            order = self.supabase_tool.get_order_by_id(order_id)
+            order = self.database_tool.get_order_by_id(order_id)
             if order:
                 return f"Order found: {order}"
             return f"Order {order_id} not found."
@@ -171,12 +171,12 @@ class ECommerceAgent:
                 List of orders
             """
             if user_email:
-                user = self.supabase_tool.get_user_by_email(user_email)
+                user = self.database_tool.get_user_by_email(user_email)
                 if user:
-                    orders = self.supabase_tool.get_user_orders(user["id"], limit=10)
+                    orders = self.database_tool.get_user_orders(user["id"], limit=10)
                     return f"Found {len(orders)} orders for user"
             elif status:
-                orders = self.supabase_tool.search_orders_by_status(status)
+                orders = self.database_tool.search_orders_by_status(status)
                 return f"Found {len(orders)} orders with status {status}"
             return "Please provide status or user_email"
         

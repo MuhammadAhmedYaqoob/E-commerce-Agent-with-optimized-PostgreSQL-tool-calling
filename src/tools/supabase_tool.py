@@ -2,6 +2,9 @@
 SOTA Supabase/PostgreSQL Tool for Lightweight Retrieval
 This tool implements optimized PostgreSQL queries for fast data retrieval
 in the MiniRAG architecture.
+
+NOTE: This is the legacy Supabase-only tool. 
+For unified Supabase/Local PostgreSQL support, use DatabaseTool instead.
 """
 from typing import Dict, List, Optional, Any
 from datetime import datetime
