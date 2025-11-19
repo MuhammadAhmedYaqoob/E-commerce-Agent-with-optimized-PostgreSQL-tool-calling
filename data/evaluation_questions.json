@@ -1,0 +1,631 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "domain": "e-commerce",
+    "category": "evaluation",
+    "description": "100 evaluation questions for clothing e-commerce agent testing state, memory, and tool calling",
+    "last_updated": "2025-01-15"
+  },
+  "questions": {
+    "state_memory_tests": [
+      {
+        "id": "Q001",
+        "question": "I'm looking for a men's blue shirt in size Large. What do you have?",
+        "category": "state_memory",
+        "expected_state": ["product_query", "size_preference", "color_preference"],
+        "expected_tools": ["retrieve_policy", "search_orders"],
+        "follow_up": "Q002"
+      },
+      {
+        "id": "Q002",
+        "question": "What about the same shirt in Medium?",
+        "category": "state_memory",
+        "context_required": "Q001",
+        "expected_state": ["maintains_size_change", "remembers_product"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q003",
+        "question": "I'm a woman looking for a summer dress. What's your return policy?",
+        "category": "state_memory",
+        "expected_state": ["gender_preference", "product_query", "policy_query"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q004",
+        "question": "Can I return that dress if it doesn't fit?",
+        "category": "state_memory",
+        "context_required": "Q003",
+        "expected_state": ["remembers_product", "remembers_policy_query"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q005",
+        "question": "What size should I get? I'm usually a size 8 in women's pants.",
+        "category": "state_memory",
+        "context_required": "Q003",
+        "expected_state": ["remembers_product", "size_conversion"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q006",
+        "question": "I want to check my order status. My email is john@example.com",
+        "category": "state_memory",
+        "expected_state": ["user_email", "order_query"],
+        "expected_tools": ["get_order", "search_orders"]
+      },
+      {
+        "id": "Q007",
+        "question": "What was the last order I placed?",
+        "category": "state_memory",
+        "context_required": "Q006",
+        "expected_state": ["remembers_email", "order_history"],
+        "expected_tools": ["get_user_orders"]
+      },
+      {
+        "id": "Q008",
+        "question": "Can you send me a verification code to that email?",
+        "category": "state_memory",
+        "context_required": "Q006",
+        "expected_state": ["remembers_email", "2fa_request"],
+        "expected_tools": ["send_2fa_code"]
+      },
+      {
+        "id": "Q009",
+        "question": "I received code 123456. Is that correct?",
+        "category": "state_memory",
+        "context_required": "Q008",
+        "expected_state": ["remembers_email", "verification"],
+        "expected_tools": ["verify_2fa_code"]
+      },
+      {
+        "id": "Q010",
+        "question": "I'm looking for men's jeans. What sizes do you have?",
+        "category": "state_memory",
+        "expected_state": ["product_query", "size_inquiry"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q011",
+        "question": "Do you have those in size 32?",
+        "category": "state_memory",
+        "context_required": "Q010",
+        "expected_state": ["remembers_product", "size_specific"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q012",
+        "question": "What's the shipping cost for that?",
+        "category": "state_memory",
+        "context_required": "Q011",
+        "expected_state": ["remembers_product", "shipping_query"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q013",
+        "question": "I want to track my order. Order number is ORD-12345",
+        "category": "state_memory",
+        "expected_state": ["order_id", "tracking_query"],
+        "expected_tools": ["get_order"]
+      },
+      {
+        "id": "Q014",
+        "question": "Can you notify me when it ships?",
+        "category": "state_memory",
+        "context_required": "Q013",
+        "expected_state": ["remembers_order", "notification_request"],
+        "expected_tools": ["send_notification"]
+      },
+      {
+        "id": "Q015",
+        "question": "I'm looking for a women's black dress for a wedding",
+        "category": "state_memory",
+        "expected_state": ["product_query", "occasion", "color", "gender"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q016",
+        "question": "What's the return policy for that?",
+        "category": "state_memory",
+        "context_required": "Q015",
+        "expected_state": ["remembers_product", "policy_query"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q017",
+        "question": "I'm size 6 in women's. Will that fit?",
+        "category": "state_memory",
+        "context_required": "Q015",
+        "expected_state": ["remembers_product", "size_fit_query"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q018",
+        "question": "How do I care for that dress?",
+        "category": "state_memory",
+        "context_required": "Q015",
+        "expected_state": ["remembers_product", "care_instructions"],
+        "expected_tools": ["retrieve_policy"]
+      },
+      {
+        "id": "Q019",
+        "question": "I want to check my loyalty points. Email is sarah@example.com",
+        "category": "state_memory",
+        "expected_state": ["user_email", "loyalty_query"],
+        "expected_tools": ["get_user_by_email"]
+      },
+      {
+        "id": "Q020",
+        "question": "How many points do I need for a $10 discount?",
+        "category": "state_memory",
+        "context_required": "Q019",
+        "expected_state": ["remembers_loyalty_query", "points_calculation"],
+        "expected_tools": ["retrieve_policy"]
+      }
+    ],
+    "tool_calling_tests": [
+      {
+        "id": "Q021",
+        "question": "What is your return policy?",
+        "category": "tool_calling",
+        "expected_tools": ["retrieve_policy"],
+        "tool_sequence": ["retrieve_policy"]
+      },
+      {
+        "id": "Q022",
+        "question": "I need to return order ORD-67890. How do I do that?",
+        "category": "tool_calling",
+        "expected_tools": ["get_order", "retrieve_policy"],
+        "tool_sequence": ["get_order", "retrieve_policy"]
+      },
+      {
+        "id": "Q023",
+        "question": "Send me a 2FA code to verify my account. Email: mike@example.com",
+        "category": "tool_calling",
+        "expected_tools": ["send_2fa_code"],
+        "tool_sequence": ["send_2fa_code"]
+      },
+      {
+        "id": "Q024",
+        "question": "Verify code 789012 for email mike@example.com",
+        "category": "tool_calling",
+        "expected_tools": ["verify_2fa_code"],
+        "tool_sequence": ["verify_2fa_code"]
+      },
+      {
+        "id": "Q025",
+        "question": "Notify me when order ORD-11111 ships. Email: lisa@example.com",
+        "category": "tool_calling",
+        "expected_tools": ["get_order", "send_notification"],
+        "tool_sequence": ["get_order", "send_notification"]
+      },
+      {
+        "id": "Q026",
+        "question": "What are all my pending orders? Email: david@example.com",
+        "category": "tool_calling",
+        "expected_tools": ["get_user_by_email", "search_orders"],
+        "tool_sequence": ["get_user_by_email", "search_orders"]
+      },
+      {
+        "id": "Q027",
+        "question": "Get my order history. Email: emily@example.com",
+        "category": "tool_calling",
+        "expected_tools": ["get_user_by_email", "get_user_orders"],
+        "tool_sequence": ["get_user_by_email", "get_user_orders"]
+      },
+      {
+        "id": "Q028",
+        "question": "What's the status of order ORD-22222 and send me an update email to james@example.com",
+        "category": "tool_calling",
+        "expected_tools": ["get_order", "send_notification"],
+        "tool_sequence": ["get_order", "send_notification"]
+      },
+      {
+        "id": "Q029",
+        "question": "I want to verify my account. Send 2FA to test@example.com and then verify code 345678",
+        "category": "tool_calling",
+        "expected_tools": ["send_2fa_code", "verify_2fa_code"],
+        "tool_sequence": ["send_2fa_code", "verify_2fa_code"]
+      },
+      {
+        "id": "Q030",
+        "question": "What's my order ORD-33333 status and what's the return policy?",
+        "category": "tool_calling",
+        "expected_tools": ["get_order", "retrieve_policy"],
+        "tool_sequence": ["get_order", "retrieve_policy"]
+      }
+    ],
+    "policy_queries": [
+      {
+        "id": "Q031",
+        "question": "What is your shipping policy?",
+        "category": "policy"
+      },
+      {
+        "id": "Q032",
+        "question": "How long does shipping take?",
+        "category": "policy"
+      },
+      {
+        "id": "Q033",
+        "question": "What are your shipping costs?",
+        "category": "policy"
+      },
+      {
+        "id": "Q034",
+        "question": "Do you ship internationally?",
+        "category": "policy"
+      },
+      {
+        "id": "Q035",
+        "question": "What payment methods do you accept?",
+        "category": "policy"
+      },
+      {
+        "id": "Q036",
+        "question": "Is my payment information secure?",
+        "category": "policy"
+      },
+      {
+        "id": "Q037",
+        "question": "What is your privacy policy?",
+        "category": "policy"
+      },
+      {
+        "id": "Q038",
+        "question": "How do you protect my data?",
+        "category": "policy"
+      },
+      {
+        "id": "Q039",
+        "question": "What is your size guide for women's clothing?",
+        "category": "policy"
+      },
+      {
+        "id": "Q040",
+        "question": "What is your size guide for men's clothing?",
+        "category": "policy"
+      },
+      {
+        "id": "Q041",
+        "question": "How do I know what size to order?",
+        "category": "policy"
+      },
+      {
+        "id": "Q042",
+        "question": "What are the care instructions for clothing?",
+        "category": "policy"
+      },
+      {
+        "id": "Q043",
+        "question": "How do I wash my clothes?",
+        "category": "policy"
+      },
+      {
+        "id": "Q044",
+        "question": "What is your customer service policy?",
+        "category": "policy"
+      },
+      {
+        "id": "Q045",
+        "question": "How can I contact customer service?",
+        "category": "policy"
+      },
+      {
+        "id": "Q046",
+        "question": "What is your loyalty program?",
+        "category": "policy"
+      },
+      {
+        "id": "Q047",
+        "question": "How do I earn loyalty points?",
+        "category": "policy"
+      },
+      {
+        "id": "Q048",
+        "question": "How do I redeem loyalty points?",
+        "category": "policy"
+      },
+      {
+        "id": "Q049",
+        "question": "What is your inventory policy?",
+        "category": "policy"
+      },
+      {
+        "id": "Q050",
+        "question": "How do I know if something is in stock?",
+        "category": "policy"
+      }
+    ],
+    "product_queries": [
+      {
+        "id": "Q051",
+        "question": "Do you have men's blue jeans?",
+        "category": "product"
+      },
+      {
+        "id": "Q052",
+        "question": "What women's dresses do you have?",
+        "category": "product"
+      },
+      {
+        "id": "Q053",
+        "question": "I need a men's white shirt in size Large",
+        "category": "product"
+      },
+      {
+        "id": "Q054",
+        "question": "Do you have women's black pants in size 8?",
+        "category": "product"
+      },
+      {
+        "id": "Q055",
+        "question": "What colors do you have for men's t-shirts?",
+        "category": "product"
+      },
+      {
+        "id": "Q056",
+        "question": "I'm looking for a formal dress for a wedding",
+        "category": "product"
+      },
+      {
+        "id": "Q057",
+        "question": "Do you have casual men's clothing?",
+        "category": "product"
+      },
+      {
+        "id": "Q058",
+        "question": "What sizes do you have for women's tops?",
+        "category": "product"
+      },
+      {
+        "id": "Q059",
+        "question": "I need a winter jacket for men",
+        "category": "product"
+      },
+      {
+        "id": "Q060",
+        "question": "Do you have summer dresses?",
+        "category": "product"
+      },
+      {
+        "id": "Q061",
+        "question": "What material is your men's shirts made of?",
+        "category": "product"
+      },
+      {
+        "id": "Q062",
+        "question": "Do you have cotton dresses?",
+        "category": "product"
+      },
+      {
+        "id": "Q063",
+        "question": "I'm looking for a red dress",
+        "category": "product"
+      },
+      {
+        "id": "Q064",
+        "question": "What men's clothing do you have in navy blue?",
+        "category": "product"
+      },
+      {
+        "id": "Q065",
+        "question": "Do you have plus size women's clothing?",
+        "category": "product"
+      }
+    ],
+    "order_queries": [
+      {
+        "id": "Q066",
+        "question": "Where is my order?",
+        "category": "order"
+      },
+      {
+        "id": "Q067",
+        "question": "When will my order arrive?",
+        "category": "order"
+      },
+      {
+        "id": "Q068",
+        "question": "Can I cancel my order?",
+        "category": "order"
+      },
+      {
+        "id": "Q069",
+        "question": "How do I track my shipment?",
+        "category": "order"
+      },
+      {
+        "id": "Q070",
+        "question": "What is the status of my order?",
+        "category": "order"
+      },
+      {
+        "id": "Q071",
+        "question": "I haven't received my order. What should I do?",
+        "category": "order"
+      },
+      {
+        "id": "Q072",
+        "question": "Can I change my shipping address?",
+        "category": "order"
+      },
+      {
+        "id": "Q073",
+        "question": "How do I return an item?",
+        "category": "order"
+      },
+      {
+        "id": "Q074",
+        "question": "I received the wrong item. What do I do?",
+        "category": "order"
+      },
+      {
+        "id": "Q075",
+        "question": "My order is damaged. How do I get a replacement?",
+        "category": "order"
+      }
+    ],
+    "complex_multi_tool": [
+      {
+        "id": "Q076",
+        "question": "I want to return my order ORD-44444. First, verify my email test@example.com with code 456789, then tell me the return policy",
+        "category": "complex",
+        "expected_tools": ["verify_2fa_code", "get_order", "retrieve_policy"],
+        "tool_sequence": ["verify_2fa_code", "get_order", "retrieve_policy"]
+      },
+      {
+        "id": "Q077",
+        "question": "Check my order ORD-55555 status, and if it's shipped, send me a notification to user@example.com",
+        "category": "complex",
+        "expected_tools": ["get_order", "send_notification"],
+        "tool_sequence": ["get_order", "send_notification"]
+      },
+      {
+        "id": "Q078",
+        "question": "I'm looking for a men's shirt. What's the return policy and shipping cost?",
+        "category": "complex",
+        "expected_tools": ["retrieve_policy"],
+        "tool_sequence": ["retrieve_policy"]
+      },
+      {
+        "id": "Q079",
+        "question": "Get all my orders for email jane@example.com and send me a summary notification",
+        "category": "complex",
+        "expected_tools": ["get_user_by_email", "get_user_orders", "send_notification"],
+        "tool_sequence": ["get_user_by_email", "get_user_orders", "send_notification"]
+      },
+      {
+        "id": "Q080",
+        "question": "I want to verify my account with email bob@example.com, then check my order history",
+        "category": "complex",
+        "expected_tools": ["send_2fa_code", "get_user_by_email", "get_user_orders"],
+        "tool_sequence": ["send_2fa_code", "get_user_by_email", "get_user_orders"]
+      },
+      {
+        "id": "Q081",
+        "question": "What's my order ORD-66666 status? Also, what's the return policy if I need to return it?",
+        "category": "complex",
+        "expected_tools": ["get_order", "retrieve_policy"],
+        "tool_sequence": ["get_order", "retrieve_policy"]
+      },
+      {
+        "id": "Q082",
+        "question": "I'm looking for a women's dress. Tell me about sizes, return policy, and shipping",
+        "category": "complex",
+        "expected_tools": ["retrieve_policy"],
+        "tool_sequence": ["retrieve_policy"]
+      },
+      {
+        "id": "Q083",
+        "question": "Send 2FA code to alice@example.com, verify with 567890, then get my order history",
+        "category": "complex",
+        "expected_tools": ["send_2fa_code", "verify_2fa_code", "get_user_by_email", "get_user_orders"],
+        "tool_sequence": ["send_2fa_code", "verify_2fa_code", "get_user_by_email", "get_user_orders"]
+      },
+      {
+        "id": "Q084",
+        "question": "Check order ORD-77777, if it's delivered, send notification to charlie@example.com with the delivery details",
+        "category": "complex",
+        "expected_tools": ["get_order", "send_notification"],
+        "tool_sequence": ["get_order", "send_notification"]
+      },
+      {
+        "id": "Q085",
+        "question": "I want to know about men's jeans sizes, return policy, and care instructions",
+        "category": "complex",
+        "expected_tools": ["retrieve_policy"],
+        "tool_sequence": ["retrieve_policy"]
+      }
+    ],
+    "edge_cases": [
+      {
+        "id": "Q086",
+        "question": "What if my order never arrives?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q087",
+        "question": "Can I return an item after 30 days?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q088",
+        "question": "What if the size doesn't fit even after checking the size guide?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q089",
+        "question": "I lost my order confirmation. Can I still track it?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q090",
+        "question": "What if I want to exchange instead of return?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q091",
+        "question": "Can I cancel an order that's already shipped?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q092",
+        "question": "What if I receive a damaged item?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q093",
+        "question": "Do you have a size that's between Medium and Large?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q094",
+        "question": "What if I want to return multiple items from the same order?",
+        "category": "edge_case"
+      },
+      {
+        "id": "Q095",
+        "question": "Can I return a gift I received?",
+        "category": "edge_case"
+      }
+    ],
+    "conversation_flow": [
+      {
+        "id": "Q096",
+        "question": "Hi, I'm new here. Can you help me find a dress?",
+        "category": "conversation",
+        "expected_state": ["greeting", "product_query"]
+      },
+      {
+        "id": "Q097",
+        "question": "What kind of dress?",
+        "category": "conversation",
+        "context_required": "Q096",
+        "expected_state": ["maintains_context", "clarification"]
+      },
+      {
+        "id": "Q098",
+        "question": "Something for a wedding",
+        "category": "conversation",
+        "context_required": "Q097",
+        "expected_state": ["maintains_context", "occasion_specified"]
+      },
+      {
+        "id": "Q099",
+        "question": "What size are you?",
+        "category": "conversation",
+        "context_required": "Q098",
+        "expected_state": ["maintains_context", "size_query"]
+      },
+      {
+        "id": "Q100",
+        "question": "I'm a size 6. What do you recommend?",
+        "category": "conversation",
+        "context_required": "Q099",
+        "expected_state": ["maintains_all_context", "recommendation"]
+      }
+    ]
+  }
+}
+

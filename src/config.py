@@ -26,7 +26,14 @@ GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 GRAPH_DIR = DATA_DIR / "graphs"
-KNOWLEDGE_BASE_PATH = DATA_DIR / "ecommerce_knowledge_base.json"
+KNOWLEDGE_BASE_PATH = DATA_DIR / "ecommerce_knowledge_base.json"  # Legacy support
+
+# JSON Files (Multi-file structure)
+POLICIES_PATH = DATA_DIR / "policies.json"
+ENTITIES_PATH = DATA_DIR / "entities.json"
+RELATIONSHIPS_PATH = DATA_DIR / "relationships.json"
+GUARDRAILS_PATH = DATA_DIR / "guardrails.json"
+EVALUATION_QUESTIONS_PATH = DATA_DIR / "evaluation_questions.json"
 
 # OpenAI Models
 OPENAI_EMBED_MODEL = "text-embedding-3-small"
@@ -75,3 +82,7 @@ API_VERSION = "1.0.0"
 # LangGraph Configuration
 MAX_ITERATIONS = 50
 MEMORY_ENABLED = True
+
+# Evaluation Configuration
+EVALUATION_OUTPUT_DIR = ROOT / "evaluation_results"
+EVALUATION_PLOTS_DIR = EVALUATION_OUTPUT_DIR / "plots"

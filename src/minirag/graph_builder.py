@@ -9,7 +9,7 @@ import pickle
 import pathlib
 from typing import Dict, List, Any
 from tqdm import tqdm
-from ..config import KNOWLEDGE_BASE_PATH, GRAPH_DIR
+from ..config import DATA_DIR, GRAPH_DIR
 
 class MiniRAGGraphBuilder:
     """
@@ -22,10 +22,41 @@ class MiniRAGGraphBuilder:
         self.knowledge_base = None
         
     def load_knowledge_base(self) -> Dict:
-        """Load e-commerce knowledge base from JSON"""
+        """Load e-commerce knowledge base from multiple JSON files"""
         try:
-            with open(KNOWLEDGE_BASE_PATH, 'r', encoding='utf-8') as f:
-                self.knowledge_base = json.load(f)
+            # Load from separate JSON files
+            policies_path = DATA_DIR / "policies.json"
+            entities_path = DATA_DIR / "entities.json"
+            relationships_path = DATA_DIR / "relationships.json"
+            guardrails_path = DATA_DIR / "guardrails.json"
+            
+            knowledge_base = {}
+            
+            # Load policies
+            if policies_path.exists():
+                with open(policies_path, 'r', encoding='utf-8') as f:
+                    policies_data = json.load(f)
+                    knowledge_base["policies"] = policies_data.get("policies", {})
+            
+            # Load entities
+            if entities_path.exists():
+                with open(entities_path, 'r', encoding='utf-8') as f:
+                    entities_data = json.load(f)
+                    knowledge_base["entities"] = entities_data.get("entities", {})
+            
+            # Load relationships
+            if relationships_path.exists():
+                with open(relationships_path, 'r', encoding='utf-8') as f:
+                    relationships_data = json.load(f)
+                    knowledge_base["relationships"] = relationships_data.get("relationships", {})
+            
+            # Load guardrails
+            if guardrails_path.exists():
+                with open(guardrails_path, 'r', encoding='utf-8') as f:
+                    guardrails_data = json.load(f)
+                    knowledge_base["guardrails"] = guardrails_data.get("guardrails", {})
+            
+            self.knowledge_base = knowledge_base
             return self.knowledge_base
         except Exception as e:
             print(f"[ERROR] Failed to load knowledge base: {e}")
