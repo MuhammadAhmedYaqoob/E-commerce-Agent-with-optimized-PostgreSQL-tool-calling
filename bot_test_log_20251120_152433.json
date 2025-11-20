@@ -1,0 +1,76 @@
+{
+  "test_start_time": "2025-11-20T15:24:33.041566",
+  "test_cases": [
+    {
+      "test_name": "Logged-in: How many orders in my account",
+      "timestamp": "2025-11-20T15:24:36.768774",
+      "query": "I want to know that how many orders are belong to my account currently",
+      "user_email": "john@example.com",
+      "expected_behavior": "Should use search_orders tool with user_email parameter",
+      "actual_result": {
+        "answer": "It seems that I couldn't find any orders associated with your account. Could you please check if the email address is correct or if you might be using a different account?",
+        "steps": "completed",
+        "iterations": 2,
+        "tool_usage": 12,
+        "tool_calls": [
+          {
+            "tool": "search_orders",
+            "args": {
+              "user_email": "john@example.com"
+            }
+          },
+          {
+            "tool": "search_orders",
+            "args": {
+              "user_email": "john@example.com"
+            }
+          },
+          {
+            "tool": "search_orders",
+            "args": {
+              "user_email": "john@example.com"
+            }
+          },
+          {
+            "tool": "search_orders",
+            "args": {
+              "user_email": "john@example.com"
+            }
+          },
+          {
+            "tool": "search_orders",
+            "args": {
+              "user_email": "john@example.com"
+            }
+          },
+          {
+            "tool": "search_orders",
+            "args": {
+              "user_email": "john@example.com"
+            }
+          },
+          {
+            "tool": "search_orders",
+            "args": {
+              "user_email": "john@example.com"
+            }
+          },
+          {
+            "tool": "search_orders",
+            "args": {
+              "user_email": "john@example.com"
+            }
+          }
+        ]
+      },
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "summary": {
+    "total_tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "issues_found": []
+  }
+}

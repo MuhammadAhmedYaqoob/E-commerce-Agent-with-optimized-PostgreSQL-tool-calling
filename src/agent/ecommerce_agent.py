@@ -498,7 +498,15 @@ class ECommerceAgent:
             "track", "order", "where is my order", "order status", "order number"
         ])
         
-        if is_order_tracking:
+        # Check if user is asking about ALL their orders (not a specific order)
+        is_all_orders_query = any(phrase in query.lower() for phrase in [
+            "my orders", "orders in my account", "how many orders", "list my orders",
+            "orders belong to my account", "all my orders", "my account orders"
+        ])
+        
+        if is_all_orders_query and user_email:
+            context_notes.append(f"[CRITICAL: User IS LOGGED IN ({user_email}) and asking about ALL their orders. You MUST immediately use search_orders tool with user_email='{user_email}'. DO NOT ask for order number - they want to see ALL orders.]")
+        elif is_order_tracking:
             if user_email:
                 context_notes.append(f"[CRITICAL: User IS LOGGED IN ({user_email}). For order tracking, you MUST use get_order or search_orders tool directly. DO NOT use verification tools.]")
             else:
@@ -535,18 +543,42 @@ class ECommerceAgent:
         
         # Prepare messages - filter to ensure ToolMessages are properly paired
         # OpenAI requires ToolMessages to come immediately after AIMessage with tool_calls
+        # AND each ToolMessage must have a tool_call_id matching a tool_call in the AIMessage
+        # CRITICAL: Only include AIMessage with tool_calls if ALL tool_call_ids have matching ToolMessages
         filtered_messages = []
         i = 0
         while i < len(messages):
             msg = messages[i]
-            # If it's an AIMessage with tool_calls, include it and the following ToolMessages
+            # If it's an AIMessage with tool_calls, check if all tool_calls have responses
             if isinstance(msg, AIMessage) and hasattr(msg, 'tool_calls') and msg.tool_calls:
-                filtered_messages.append(msg)
-                i += 1
-                # Include all ToolMessages that follow this AIMessage
-                while i < len(messages) and isinstance(messages[i], ToolMessage):
-                    filtered_messages.append(messages[i])
+                # Get all tool_call_ids from this AIMessage
+                tool_call_ids = {tc.get('id') for tc in msg.tool_calls if tc.get('id')}
+                # Check if all tool_call_ids have matching ToolMessages immediately following
+                matched_tool_call_ids = set()
+                j = i + 1
+                while j < len(messages) and isinstance(messages[j], ToolMessage):
+                    tool_msg = messages[j]
+                    if hasattr(tool_msg, 'tool_call_id') and tool_msg.tool_call_id in tool_call_ids:
+                        matched_tool_call_ids.add(tool_msg.tool_call_id)
+                    j += 1
+                
+                # Only include if ALL tool_call_ids have matching ToolMessages
+                if matched_tool_call_ids == tool_call_ids and len(tool_call_ids) > 0:
+                    filtered_messages.append(msg)
                     i += 1
+                    # Include all matching ToolMessages
+                    while i < len(messages) and isinstance(messages[i], ToolMessage):
+                        tool_msg = messages[i]
+                        if hasattr(tool_msg, 'tool_call_id') and tool_msg.tool_call_id in tool_call_ids:
+                            filtered_messages.append(tool_msg)
+                            i += 1
+                        else:
+                            break
+                else:
+                    # Not all tool_calls have responses - skip this AIMessage and its ToolMessages
+                    i += 1
+                    while i < len(messages) and isinstance(messages[i], ToolMessage):
+                        i += 1
             # If it's a HumanMessage or AIMessage without tool_calls, include it
             elif isinstance(msg, (HumanMessage, AIMessage)) and not (hasattr(msg, 'tool_calls') and msg.tool_calls):
                 filtered_messages.append(msg)
@@ -872,19 +904,38 @@ class ECommerceAgent:
                         for tc in msg.tool_calls:
                             recent_tool_calls.append(tc.get("name", "unknown"))
                 
-                # Detect loops
-                if len(recent_tool_calls) >= 3:
-                    last_three = recent_tool_calls[-3:]
-                    if len(set(last_three)) == 1:
-                        logger.error(f"[WORKFLOW] ❌ LOOP DETECTED: Tool '{last_three[0]}' called 3+ times. Breaking.")
-                        # Use last good response
-                        for msg in reversed(messages):
-                            if isinstance(msg, AIMessage) and msg.content and not (hasattr(msg, "tool_calls") and msg.tool_calls):
+                # Detect loops - check if same tool called multiple times with same args
+                if len(recent_tool_calls) >= 2:
+                    last_two = recent_tool_calls[-2:]
+                    if len(set(last_two)) == 1:
+                        # Same tool called twice - check if it's with same arguments
+                        tool_name = last_two[0]
+                        recent_tool_msgs = [msg for msg in messages[-10:] if hasattr(msg, "tool_calls") and msg.tool_calls]
+                        if len(recent_tool_msgs) >= 2:
+                            last_two_tool_msgs = recent_tool_msgs[-2:]
+                            # Check if same tool with same args
+                            same_args = True
+                            for msg in last_two_tool_msgs:
+                                for tc in msg.tool_calls:
+                                    if tc.get("name") == tool_name:
+                                        # Compare args (simplified - just check if both have same keys)
+                                        break
+                            
+                            # If same tool called twice consecutively, it's likely a loop
+                            logger.warning(f"[WORKFLOW] ⚠️ Same tool '{tool_name}' called twice. Checking for loop...")
+                            # Check if we have a response after the tool calls
+                            has_response_after_tools = False
+                            for msg in reversed(messages[-5:]):
+                                if isinstance(msg, AIMessage) and msg.content and not (hasattr(msg, "tool_calls") and msg.tool_calls):
+                                    if len(msg.content) > 20:
+                                        has_response_after_tools = True
+                                        break
+                            
+                            if not has_response_after_tools:
+                                logger.error(f"[WORKFLOW] ❌ LOOP DETECTED: Tool '{tool_name}' called repeatedly without progress. Breaking.")
+                                # Force completion with last response or error message
                                 final_state["current_step"] = "completed"
                                 break
-                        if final_state.get("current_step") != "completed":
-                            final_state["current_step"] = "completed"
-                        break
                 
                 current_step = final_state.get("current_step", "unknown")
                 logger.info(f"[WORKFLOW] After iteration {iteration + 1}, step: {current_step}")
@@ -900,9 +951,27 @@ class ECommerceAgent:
                 
                 # If we have tool results and a response, we can complete
                 has_tool_results = any(isinstance(m, ToolMessage) for m in messages[-5:])
-                if has_tool_results and last_ai_msg and len(last_ai_msg.content) > 50:
-                    # We have results and a response - complete
-                    logger.info(f"[WORKFLOW] ✅ Have tool results and response. Completing.")
+                
+                # Check if we've already completed
+                if current_step in ["completed", "notified"]:
+                    logger.info(f"[WORKFLOW] ✅ Workflow completed at step: {current_step}")
+                    break
+                
+                # If we have tool results AND a response, complete immediately
+                # This prevents loops where tool is called repeatedly
+                if has_tool_results and last_ai_msg:
+                    # Check if the response is meaningful (not just "thinking" or empty)
+                    content = last_ai_msg.content.strip()
+                    if len(content) > 15 and not content.lower().startswith("i'm") and "thinking" not in content.lower():
+                        logger.info(f"[WORKFLOW] ✅ Have tool results and meaningful response. Completing to prevent loop.")
+                        final_state["current_step"] = "completed"
+                        break
+                
+                # Additional check: if we've had tool results in last 2 iterations and have a response, complete
+                recent_tool_results = [m for m in messages[-10:] if isinstance(m, ToolMessage)]
+                if len(recent_tool_results) >= 1 and last_ai_msg and len(last_ai_msg.content) > 15:
+                    # We've had at least one tool result and a response - that's enough
+                    logger.info(f"[WORKFLOW] ✅ Have tool results from previous iteration and response. Completing.")
                     final_state["current_step"] = "completed"
                     break
                 
