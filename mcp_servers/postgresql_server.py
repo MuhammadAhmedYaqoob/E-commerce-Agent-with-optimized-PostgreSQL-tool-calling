@@ -27,12 +27,16 @@ from mcp_servers.simple_rpc_server import SimpleRPCServer
 # Initialize database tool
 db_tool = DatabaseTool()
 
-# Helper to serialize datetime objects
+# Helper to serialize datetime, date, and Decimal objects
 def serialize_datetime(obj):
-    """Convert datetime objects to strings for JSON serialization"""
-    from datetime import datetime
-    if isinstance(obj, datetime):
+    """Convert datetime, date, and Decimal objects to JSON-serializable types"""
+    from datetime import datetime, date
+    from decimal import Decimal
+    
+    if isinstance(obj, (datetime, date)):
         return obj.isoformat()
+    elif isinstance(obj, Decimal):
+        return float(obj)
     elif isinstance(obj, dict):
         return {k: serialize_datetime(v) for k, v in obj.items()}
     elif isinstance(obj, list):
