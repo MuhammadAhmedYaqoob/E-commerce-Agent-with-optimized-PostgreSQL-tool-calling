@@ -165,6 +165,35 @@ class DatabaseTool:
             results = self._execute_query(query, (user_id, limit))
             return results
     
+    def get_user_email_from_order(self, order_number: str) -> Optional[str]:
+        """Get user email from order number for verification"""
+        if self.use_supabase:
+            if not self.client:
+                # Mock for testing
+                order = self._mock_order(order_number)
+                return order.get("users", {}).get("email") if order else None
+            try:
+                response = self.client.table("orders").select(
+                    "users(email)"
+                ).eq("order_number", order_number).limit(1).execute()
+                if response.data and response.data[0].get("users"):
+                    return response.data[0]["users"]["email"]
+                return None
+            except Exception as e:
+                print(f"[ERROR] Failed to get user email from order: {e}")
+                return None
+        else:
+            # Local PostgreSQL
+            query = """
+                SELECT u.email
+                FROM orders o
+                JOIN users u ON o.user_id = u.id
+                WHERE o.order_number = %s
+                LIMIT 1
+            """
+            results = self._execute_query(query, (order_number,))
+            return results[0]["email"] if results else None
+    
     def get_order_by_id(self, order_id: str) -> Optional[Dict[str, Any]]:
         """Get order by ID with all related data"""
         if self.use_supabase:
@@ -182,6 +211,7 @@ class DatabaseTool:
                 return None
         else:
             # Local PostgreSQL - optimized query
+            # Try order_number first (string), then id (UUID)
             query = """
                 SELECT 
                     o.*,
@@ -204,11 +234,11 @@ class DatabaseTool:
                 FROM orders o
                 LEFT JOIN order_items oi ON o.id = oi.order_id
                 LEFT JOIN users u ON o.user_id = u.id
-                WHERE o.id = %s OR o.order_number = %s
+                WHERE o.order_number = %s OR (o.id::text = %s AND %s ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
                 GROUP BY o.id, u.email, u.name
                 LIMIT 1
             """
-            results = self._execute_query(query, (order_id, order_id))
+            results = self._execute_query(query, (order_id, order_id, order_id))
             return results[0] if results else None
     
     def search_orders_by_status(self, status: str, limit: int = 20) -> List[Dict[str, Any]]:

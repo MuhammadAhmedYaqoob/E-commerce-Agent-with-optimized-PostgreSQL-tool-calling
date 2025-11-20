@@ -14,25 +14,26 @@ INSERT INTO users (id, email, name, verified, loyalty_tier, loyalty_points) VALU
     ('550e8400-e29b-41d4-a716-446655440009', 'bob@example.com', 'Bob Taylor', TRUE, 'bronze', 100),
     ('550e8400-e29b-41d4-a716-446655440010', 'alice@example.com', 'Alice Martinez', TRUE, 'gold', 2800),
     ('550e8400-e29b-41d4-a716-446655440011', 'charlie@example.com', 'Charlie Garcia', TRUE, 'silver', 900),
-    ('550e8400-e29b-41d4-a716-446655440012', 'test@example.com', 'Test User', TRUE, 'bronze', 500)
+    ('550e8400-e29b-41d4-a716-446655440012', 'test@example.com', 'Test User', TRUE, 'bronze', 500),
+    ('550e8400-e29b-41d4-a716-446655440013', 'ahmedyaqoobbusiness@gmail.com', 'Ahmed Yaqoob', TRUE, 'gold', 3500)
 ON CONFLICT (email) DO NOTHING;
 
 -- Insert Sample Products (Men's Clothing)
 INSERT INTO products (id, name, description, category, subcategory, price, compare_at_price, sku, status) VALUES
-    ('660e8400-e29b-41d4-a716-446655440001', 'Men\'s Classic Blue Shirt', 'Premium cotton shirt in classic blue', 'Men\'s Clothing', 'Shirts', 49.99, 59.99, 'MENS-SHIRT-BLUE-001', 'active'),
-    ('660e8400-e29b-41d4-a716-446655440002', 'Men\'s White Dress Shirt', 'Formal white dress shirt', 'Men\'s Clothing', 'Shirts', 59.99, 69.99, 'MENS-SHIRT-WHITE-001', 'active'),
-    ('660e8400-e29b-41d4-a716-446655440003', 'Men\'s Blue Jeans', 'Classic fit blue denim jeans', 'Men\'s Clothing', 'Jeans', 79.99, 89.99, 'MENS-JEANS-BLUE-001', 'active'),
-    ('660e8400-e29b-41d4-a716-446655440004', 'Men\'s Black T-Shirt', 'Comfortable cotton t-shirt', 'Men\'s Clothing', 'T-Shirts', 29.99, 39.99, 'MENS-TSHIRT-BLACK-001', 'active'),
-    ('660e8400-e29b-41d4-a716-446655440005', 'Men\'s Navy Jacket', 'Stylish navy blue jacket', 'Men\'s Clothing', 'Jackets', 129.99, 149.99, 'MENS-JACKET-NAVY-001', 'active')
+    ('660e8400-e29b-41d4-a716-446655440001', 'Mens Classic Blue Shirt', 'Premium cotton shirt in classic blue', 'Mens Clothing', 'Shirts', 49.99, 59.99, 'MENS-SHIRT-BLUE-001', 'active'),
+    ('660e8400-e29b-41d4-a716-446655440002', 'Mens White Dress Shirt', 'Formal white dress shirt', 'Mens Clothing', 'Shirts', 59.99, 69.99, 'MENS-SHIRT-WHITE-001', 'active'),
+    ('660e8400-e29b-41d4-a716-446655440003', 'Mens Blue Jeans', 'Classic fit blue denim jeans', 'Mens Clothing', 'Jeans', 79.99, 89.99, 'MENS-JEANS-BLUE-001', 'active'),
+    ('660e8400-e29b-41d4-a716-446655440004', 'Mens Black T-Shirt', 'Comfortable cotton t-shirt', 'Mens Clothing', 'T-Shirts', 29.99, 39.99, 'MENS-TSHIRT-BLACK-001', 'active'),
+    ('660e8400-e29b-41d4-a716-446655440005', 'Mens Navy Jacket', 'Stylish navy blue jacket', 'Mens Clothing', 'Jackets', 129.99, 149.99, 'MENS-JACKET-NAVY-001', 'active')
 ON CONFLICT DO NOTHING;
 
 -- Insert Sample Products (Women's Clothing)
 INSERT INTO products (id, name, description, category, subcategory, price, compare_at_price, sku, status) VALUES
-    ('660e8400-e29b-41d4-a716-446655440006', 'Women\'s Summer Dress', 'Beautiful summer dress in floral pattern', 'Women\'s Clothing', 'Dresses', 69.99, 89.99, 'WOMENS-DRESS-SUMMER-001', 'active'),
-    ('660e8400-e29b-41d4-a716-446655440007', 'Women\'s Black Dress', 'Elegant black dress for formal occasions', 'Women\'s Clothing', 'Dresses', 89.99, 119.99, 'WOMENS-DRESS-BLACK-001', 'active'),
-    ('660e8400-e29b-41d4-a716-446655440008', 'Women\'s Blue Jeans', 'Slim fit blue jeans', 'Women\'s Clothing', 'Jeans', 79.99, 99.99, 'WOMENS-JEANS-BLUE-001', 'active'),
-    ('660e8400-e29b-41d4-a716-446655440009', 'Women\'s White Top', 'Casual white blouse', 'Women\'s Clothing', 'Tops', 39.99, 49.99, 'WOMENS-TOP-WHITE-001', 'active'),
-    ('660e8400-e29b-41d4-a716-446655440010', 'Women\'s Red Skirt', 'Stylish red A-line skirt', 'Women\'s Clothing', 'Skirts', 49.99, 59.99, 'WOMENS-SKIRT-RED-001', 'active')
+    ('660e8400-e29b-41d4-a716-446655440006', 'Womens Summer Dress', 'Beautiful summer dress in floral pattern', 'Womens Clothing', 'Dresses', 69.99, 89.99, 'WOMENS-DRESS-SUMMER-001', 'active'),
+    ('660e8400-e29b-41d4-a716-446655440007', 'Womens Black Dress', 'Elegant black dress for formal occasions', 'Womens Clothing', 'Dresses', 89.99, 119.99, 'WOMENS-DRESS-BLACK-001', 'active'),
+    ('660e8400-e29b-41d4-a716-446655440008', 'Womens Blue Jeans', 'Slim fit blue jeans', 'Womens Clothing', 'Jeans', 79.99, 99.99, 'WOMENS-JEANS-BLUE-001', 'active'),
+    ('660e8400-e29b-41d4-a716-446655440009', 'Womens White Top', 'Casual white blouse', 'Womens Clothing', 'Tops', 39.99, 49.99, 'WOMENS-TOP-WHITE-001', 'active'),
+    ('660e8400-e29b-41d4-a716-446655440010', 'Womens Red Skirt', 'Stylish red A-line skirt', 'Womens Clothing', 'Skirts', 49.99, 59.99, 'WOMENS-SKIRT-RED-001', 'active')
 ON CONFLICT DO NOTHING;
 
 -- Insert Product Variants
@@ -73,21 +74,26 @@ INSERT INTO orders (id, user_id, order_number, status, payment_status, payment_m
     ('880e8400-e29b-41d4-a716-446655440006', '550e8400-e29b-41d4-a716-446655440007', 'ORD-44444', 'delivered', 'captured', 'Credit Card', 159.98, 12.80, 0.00, 172.78, 'TRACK111222333', 'FedEx', CURRENT_DATE - INTERVAL '5 days'),
     ('880e8400-e29b-41d4-a716-446655440007', '550e8400-e29b-41d4-a716-446655440008', 'ORD-55555', 'processing', 'authorized', 'Google Pay', 39.99, 3.20, 5.99, 49.18, NULL, NULL, NULL),
     ('880e8400-e29b-41d4-a716-446655440008', '550e8400-e29b-41d4-a716-446655440009', 'ORD-66666', 'shipped', 'captured', 'Credit Card', 49.99, 4.00, 0.00, 53.99, 'TRACK444555666', 'DHL', CURRENT_DATE + INTERVAL '2 days'),
-    ('880e8400-e29b-41d4-a716-446655440009', '550e8400-e29b-41d4-a716-446655440010', 'ORD-77777', 'delivered', 'captured', 'PayPal', 79.99, 6.40, 0.00, 86.39, 'TRACK777888999', 'UPS', CURRENT_DATE - INTERVAL '1 day')
+    ('880e8400-e29b-41d4-a716-446655440009', '550e8400-e29b-41d4-a716-446655440010', 'ORD-77777', 'delivered', 'captured', 'PayPal', 79.99, 6.40, 0.00, 86.39, 'TRACK777888999', 'UPS', CURRENT_DATE - INTERVAL '1 day'),
+    ('880e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440013', 'ORD-88888', 'shipped', 'captured', 'Credit Card', 149.99, 12.00, 10.99, 172.98, 'TRACK999888777', 'FedEx', CURRENT_DATE + INTERVAL '2 days'),
+    ('880e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440013', 'ORD-99999', 'delivered', 'captured', 'PayPal', 89.99, 7.20, 0.00, 97.19, 'TRACK111222333', 'UPS', CURRENT_DATE - INTERVAL '3 days')
 ON CONFLICT DO NOTHING;
 
 -- Insert Order Items
 INSERT INTO order_items (id, order_id, product_id, variant_id, product_name, variant_description, quantity, unit_price, total_price) VALUES
-    ('990e8400-e29b-41d4-a716-446655440001', '880e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440003', 'Men\'s Classic Blue Shirt', 'Size: L, Color: Blue', 1, 49.99, 49.99),
-    ('990e8400-e29b-41d4-a716-446655440002', '880e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440007', '770e8400-e29b-41d4-a716-446655440013', 'Women\'s Black Dress', 'Size: 4, Color: Black', 1, 89.99, 89.99),
-    ('990e8400-e29b-41d4-a716-446655440003', '880e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440008', 'Men\'s Blue Jeans', 'Size: 32, Color: Blue', 1, 79.99, 79.99),
-    ('990e8400-e29b-41d4-a716-446655440004', '880e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440005', NULL, 'Men\'s Navy Jacket', 'One Size', 1, 129.99, 129.99),
-    ('990e8400-e29b-41d4-a716-446655440005', '880e8400-e29b-41d4-a716-446655440005', '660e8400-e29b-41d4-a716-446655440006', '770e8400-e29b-41d4-a716-446655440011', 'Women\'s Summer Dress', 'Size: M, Color: Floral', 1, 69.99, 69.99),
-    ('990e8400-e29b-41d4-a716-446655440006', '880e8400-e29b-41d4-a716-446655440006', '660e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440002', 'Men\'s Classic Blue Shirt', 'Size: M, Color: Blue', 2, 49.99, 99.98),
-    ('990e8400-e29b-41d4-a716-446655440007', '880e8400-e29b-41d4-a716-446655440006', '660e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440007', 'Men\'s Blue Jeans', 'Size: 30, Color: Blue', 1, 79.99, 79.99),
-    ('990e8400-e29b-41d4-a716-446655440008', '880e8400-e29b-41d4-a716-446655440007', '660e8400-e29b-41d4-a716-446655440009', NULL, 'Women\'s White Top', 'One Size', 1, 39.99, 39.99),
-    ('990e8400-e29b-41d4-a716-446655440009', '880e8400-e29b-41d4-a716-446655440008', '660e8400-e29b-41d4-a716-446655440008', '770e8400-e29b-41d4-a716-446655440017', 'Women\'s Blue Jeans', 'Size: 8, Color: Blue', 1, 79.99, 79.99),
-    ('990e8400-e29b-41d4-a716-446655440010', '880e8400-e29b-41d4-a716-446655440009', '660e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440009', 'Men\'s Blue Jeans', 'Size: 34, Color: Blue', 1, 79.99, 79.99)
+    ('990e8400-e29b-41d4-a716-446655440001', '880e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440003', 'Mens Classic Blue Shirt', 'Size: L, Color: Blue', 1, 49.99, 49.99),
+    ('990e8400-e29b-41d4-a716-446655440002', '880e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440007', '770e8400-e29b-41d4-a716-446655440013', 'Womens Black Dress', 'Size: 4, Color: Black', 1, 89.99, 89.99),
+    ('990e8400-e29b-41d4-a716-446655440003', '880e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440008', 'Mens Blue Jeans', 'Size: 32, Color: Blue', 1, 79.99, 79.99),
+    ('990e8400-e29b-41d4-a716-446655440004', '880e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440005', NULL, 'Mens Navy Jacket', 'One Size', 1, 129.99, 129.99),
+    ('990e8400-e29b-41d4-a716-446655440005', '880e8400-e29b-41d4-a716-446655440005', '660e8400-e29b-41d4-a716-446655440006', '770e8400-e29b-41d4-a716-446655440011', 'Womens Summer Dress', 'Size: M, Color: Floral', 1, 69.99, 69.99),
+    ('990e8400-e29b-41d4-a716-446655440006', '880e8400-e29b-41d4-a716-446655440006', '660e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440002', 'Mens Classic Blue Shirt', 'Size: M, Color: Blue', 2, 49.99, 99.98),
+    ('990e8400-e29b-41d4-a716-446655440007', '880e8400-e29b-41d4-a716-446655440006', '660e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440007', 'Mens Blue Jeans', 'Size: 30, Color: Blue', 1, 79.99, 79.99),
+    ('990e8400-e29b-41d4-a716-446655440008', '880e8400-e29b-41d4-a716-446655440007', '660e8400-e29b-41d4-a716-446655440009', NULL, 'Womens White Top', 'One Size', 1, 39.99, 39.99),
+    ('990e8400-e29b-41d4-a716-446655440009', '880e8400-e29b-41d4-a716-446655440008', '660e8400-e29b-41d4-a716-446655440008', '770e8400-e29b-41d4-a716-446655440017', 'Womens Blue Jeans', 'Size: 8, Color: Blue', 1, 79.99, 79.99),
+    ('990e8400-e29b-41d4-a716-446655440010', '880e8400-e29b-41d4-a716-446655440009', '660e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440009', 'Mens Blue Jeans', 'Size: 34, Color: Blue', 1, 79.99, 79.99),
+    ('990e8400-e29b-41d4-a716-446655440011', '880e8400-e29b-41d4-a716-446655440010', '660e8400-e29b-41d4-a716-446655440005', NULL, 'Mens Navy Jacket', 'One Size', 1, 129.99, 129.99),
+    ('990e8400-e29b-41d4-a716-446655440012', '880e8400-e29b-41d4-a716-446655440010', '660e8400-e29b-41d4-a716-446655440004', NULL, 'Mens Black T-Shirt', 'One Size', 1, 29.99, 29.99),
+    ('990e8400-e29b-41d4-a716-446655440013', '880e8400-e29b-41d4-a716-446655440011', '660e8400-e29b-41d4-a716-446655440006', '770e8400-e29b-41d4-a716-446655440010', 'Womens Summer Dress', 'Size: S, Color: Floral', 1, 69.99, 69.99)
 ON CONFLICT DO NOTHING;
 
 -- Insert Sample Payments

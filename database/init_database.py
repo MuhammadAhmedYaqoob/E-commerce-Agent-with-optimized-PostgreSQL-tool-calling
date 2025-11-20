@@ -120,11 +120,11 @@ if __name__ == "__main__":
     success = initialize_database()
     
     if success:
-        print("\n✅ Database ready for use!")
+        print("\n[SUCCESS] Database ready for use!")
         print(f"Database: {DB_NAME}")
         print(f"Host: {DB_HOST}:{DB_PORT}")
         print(f"User: {DB_USER}")
     else:
-        print("\n❌ Database initialization failed!")
+        print("\n[ERROR] Database initialization failed!")
         sys.exit(1)
 

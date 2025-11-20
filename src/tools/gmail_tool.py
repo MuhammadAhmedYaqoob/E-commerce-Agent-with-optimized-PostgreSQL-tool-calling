@@ -77,13 +77,14 @@ class GmailTool:
             "created_at": datetime.now()
         }
         
+        expiry_text = f"{EMAIL_VERIFICATION_EXPIRY} seconds" if EMAIL_VERIFICATION_EXPIRY < 60 else f"{EMAIL_VERIFICATION_EXPIRY // 60} minutes"
         subject = f"Your Verification Code - {purpose.title()}"
         body = f"""
         Hello,
         
         Your verification code is: {code}
         
-        This code will expire in {EMAIL_VERIFICATION_EXPIRY // 60} minutes.
+        This code will expire in {expiry_text}.
         
         If you didn't request this code, please ignore this email.
         
@@ -96,7 +97,8 @@ class GmailTool:
         return {
             "success": success,
             "code_sent": success,
-            "expiry_minutes": EMAIL_VERIFICATION_EXPIRY // 60,
+            "expiry_seconds": EMAIL_VERIFICATION_EXPIRY,
+            "expiry_text": expiry_text,
             "message": "Verification code sent successfully" if success else "Failed to send code"
         }
     
