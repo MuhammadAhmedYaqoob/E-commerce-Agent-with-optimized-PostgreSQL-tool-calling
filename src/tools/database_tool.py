@@ -465,4 +465,140 @@ class DatabaseTool:
             }
             for i in range(min(limit, 5))
         ]
+    
+    def get_product_categories(self) -> List[str]:
+        """Get all unique product categories from database"""
+        if self.use_supabase:
+            if not self.client:
+                return ["Electronics", "Clothing", "Home & Kitchen", "Beauty", "Sports", "Toys"]
+            try:
+                response = self.client.table("products").select("category").execute()
+                categories = list(set([item["category"] for item in response.data if item.get("category")]))
+                return sorted(categories) if categories else []
+            except Exception as e:
+                print(f"[ERROR] Failed to get categories: {e}")
+                return []
+        else:
+            # Local PostgreSQL
+            if not self.conn:
+                return ["Electronics", "Clothing", "Home & Kitchen", "Beauty", "Sports", "Toys"]
+            query = "SELECT DISTINCT category FROM products WHERE status = 'active' AND category IS NOT NULL ORDER BY category"
+            results = self._execute_query(query)
+            return [row["category"] for row in results] if results else []
+    
+    def get_user_cart(self, user_email: str) -> Optional[Dict[str, Any]]:
+        """Get user's cart with items"""
+        if not user_email:
+            return None
+        
+        # Get user first
+        user = self.get_user_by_email(user_email)
+        if not user:
+            return None
+        
+        user_id = user["id"]
+        
+        if self.use_supabase:
+            if not self.client:
+                return {"items": [], "total": 0.0, "item_count": 0}
+            try:
+                # Get user's cart
+                cart_response = self.client.table("carts").select("*").eq("user_id", user_id).limit(1).execute()
+                if not cart_response.data:
+                    return {"items": [], "total": 0.0, "item_count": 0}
+                
+                cart = cart_response.data[0]
+                cart_id = cart["id"]
+                
+                # Get cart items with product details
+                items_response = self.client.table("cart_items").select(
+                    "*, products(*), product_variants(*)"
+                ).eq("cart_id", cart_id).execute()
+                
+                items = []
+                total = 0.0
+                for item in items_response.data:
+                    product = item.get("products", {})
+                    variant = item.get("product_variants", {})
+                    quantity = item.get("quantity", 1)
+                    price = variant.get("price") if variant else product.get("price", 0)
+                    item_total = price * quantity
+                    total += item_total
+                    
+                    items.append({
+                        "id": item["id"],
+                        "product_id": item.get("product_id"),
+                        "product_name": product.get("name", "Unknown"),
+                        "variant": variant,
+                        "quantity": quantity,
+                        "price": price,
+                        "total": item_total
+                    })
+                
+                return {
+                    "cart_id": cart_id,
+                    "items": items,
+                    "total": total,
+                    "item_count": len(items),
+                    "updated_at": cart.get("updated_at")
+                }
+            except Exception as e:
+                print(f"[ERROR] Failed to get cart: {e}")
+                return {"items": [], "total": 0.0, "item_count": 0}
+        else:
+            # Local PostgreSQL
+            if not self.conn:
+                return {"items": [], "total": 0.0, "item_count": 0}
+            
+            query = """
+                SELECT 
+                    c.id as cart_id,
+                    c.updated_at,
+                    ci.id as item_id,
+                    ci.product_id,
+                    ci.variant_id,
+                    ci.quantity,
+                    p.name as product_name,
+                    p.price as product_price,
+                    pv.price as variant_price,
+                    COALESCE(pv.price, p.price) * ci.quantity as item_total
+                FROM carts c
+                LEFT JOIN cart_items ci ON c.id = ci.cart_id
+                LEFT JOIN products p ON ci.product_id = p.id
+                LEFT JOIN product_variants pv ON ci.variant_id = pv.id
+                WHERE c.user_id = %s
+                ORDER BY ci.created_at DESC
+            """
+            results = self._execute_query(query, (user_id,))
+            
+            if not results:
+                return {"items": [], "total": 0.0, "item_count": 0}
+            
+            # Group by cart
+            cart_id = results[0]["cart_id"]
+            items = []
+            total = 0.0
+            
+            for row in results:
+                if row["item_id"]:
+                    price = row["variant_price"] or row["product_price"] or 0
+                    item_total = price * (row["quantity"] or 1)
+                    total += item_total
+                    
+                    items.append({
+                        "id": row["item_id"],
+                        "product_id": row["product_id"],
+                        "product_name": row["product_name"] or "Unknown",
+                        "quantity": row["quantity"] or 1,
+                        "price": price,
+                        "total": item_total
+                    })
+            
+            return {
+                "cart_id": cart_id,
+                "items": items,
+                "total": total,
+                "item_count": len(items),
+                "updated_at": results[0].get("updated_at")
+            }
 

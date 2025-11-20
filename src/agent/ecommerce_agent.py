@@ -71,7 +71,9 @@ class ECommerceAgent:
             self._create_send_notification_tool(),
             self._create_send_2fa_tool(),
             self._create_verify_2fa_tool(),
-            self._create_search_orders_tool()
+            self._create_search_orders_tool(),
+            self._create_get_product_categories_tool(),
+            self._create_get_cart_tool()
         ]
         
         # Bind tools to LLM
@@ -316,6 +318,68 @@ class ECommerceAgent:
         
         return tool(search_orders)
     
+    def _create_get_product_categories_tool(self):
+        """Tool for getting product categories"""
+        def get_product_categories() -> str:
+            """Get all available product categories from the database.
+            
+            Returns:
+                List of product categories
+            """
+            logger.info(f"[TOOL] get_product_categories called")
+            categories = self.database_tool.get_product_categories()
+            if categories:
+                result = f"Available product categories ({len(categories)}):\n\n"
+                for i, category in enumerate(categories, 1):
+                    result += f"{i}. {category}\n"
+                logger.info(f"[TOOL] ✅ Found {len(categories)} categories")
+                return result
+            else:
+                logger.warning(f"[TOOL] ❌ No categories found")
+                return "No product categories found in the database."
+        
+        return tool(get_product_categories)
+    
+    def _create_get_cart_tool(self):
+        """Tool for getting user's cart"""
+        def get_cart(user_email: str) -> str:
+            """Get user's shopping cart with all items.
+            
+            Args:
+                user_email: User email address (REQUIRED)
+                
+            Returns:
+                Cart information with items and total
+            """
+            logger.info(f"[TOOL] get_cart called with: user_email={user_email}")
+            if not user_email:
+                return "User email is required to access cart information."
+            
+            cart = self.database_tool.get_user_cart(user_email)
+            if cart:
+                items = cart.get("items", [])
+                total = cart.get("total", 0.0)
+                item_count = cart.get("item_count", 0)
+                
+                if item_count == 0:
+                    result = f"Your cart is empty. You have 0 items in your cart."
+                else:
+                    result = f"Your cart contains {item_count} item(s):\n\n"
+                    for i, item in enumerate(items, 1):
+                        result += f"{i}. {item.get('product_name', 'Unknown')} - "
+                        result += f"Quantity: {item.get('quantity', 1)} - "
+                        result += f"Price: ${item.get('price', 0):.2f} each - "
+                        result += f"Total: ${item.get('total', 0):.2f}\n"
+                    result += f"\nCart Total: ${total:.2f}"
+                
+                logger.info(f"[TOOL] ✅ Found cart with {item_count} items")
+                return result
+            else:
+                logger.warning(f"[TOOL] ❌ Cart not found for {user_email}")
+                return f"Cart not found for {user_email}. Your cart may be empty."
+        
+        return tool(get_cart)
+    
     def _build_workflow(self) -> StateGraph:
         """Build LangGraph workflow for agentic behavior"""
         workflow = StateGraph(AgentState)
@@ -352,10 +416,26 @@ class ECommerceAgent:
         user_email = state.get("user_email", "")
         
         # Extract order number from query if present
+        # Try full pattern first (ORD-12345)
         order_match = re.search(r'ORD[-_]?\d+', query.upper())
         if order_match:
             state["current_order_number"] = order_match.group(0).replace('_', '-')
             logger.info(f"[RETRIEVE] Extracted order number: {state['current_order_number']}")
+        else:
+            # Try just numbers - if it's a standalone number and we have a remembered order, check if it matches
+            number_match = re.search(r'^\s*(\d{4,})\s*$', query.strip())
+            if number_match:
+                number = number_match.group(1)
+                # Check if we have a remembered order number that contains this number
+                remembered_order = state.get("current_order_number")
+                if remembered_order and number in remembered_order:
+                    # User is providing just the number part of the order
+                    state["current_order_number"] = remembered_order
+                    logger.info(f"[RETRIEVE] Recognized number {number} as part of order {remembered_order}")
+                elif len(number) >= 4:
+                    # Could be an order number without prefix - construct it
+                    state["current_order_number"] = f"ORD-{number}"
+                    logger.info(f"[RETRIEVE] Constructed order number: {state['current_order_number']}")
         
         # Detect process type
         query_lower = query.lower()
@@ -506,6 +586,22 @@ class ECommerceAgent:
         
         if is_all_orders_query and user_email:
             context_notes.append(f"[CRITICAL: User IS LOGGED IN ({user_email}) and asking about ALL their orders. You MUST immediately use search_orders tool with user_email='{user_email}'. DO NOT ask for order number - they want to see ALL orders.]")
+        
+        # Check if user is asking about product categories
+        is_categories_query = any(phrase in query.lower() for phrase in [
+            "product categories", "what categories", "type of product", "product types", 
+            "categories do you have", "what type of product categories"
+        ])
+        if is_categories_query:
+            context_notes.append("[CRITICAL: User asking about product categories. You MUST use get_product_categories tool immediately. This tool requires no parameters.]")
+        
+        # Check if logged-in user is asking about their cart
+        is_cart_query = any(phrase in query.lower() for phrase in [
+            "my cart", "what's in my cart", "cart items", "cart total", 
+            "items in cart", "what's inside my cart", "what is in my cart"
+        ])
+        if is_cart_query and user_email:
+            context_notes.append(f"[CRITICAL: Logged-in user ({user_email}) asking about their cart. You MUST use get_cart tool with user_email='{user_email}'. DO NOT ask for email - you already have it.]")
         elif is_order_tracking:
             if user_email:
                 context_notes.append(f"[CRITICAL: User IS LOGGED IN ({user_email}). For order tracking, you MUST use get_order or search_orders tool directly. DO NOT use verification tools.]")
@@ -541,53 +637,12 @@ class ECommerceAgent:
         else:
             query_with_context = query
         
-        # Prepare messages - filter to ensure ToolMessages are properly paired
-        # OpenAI requires ToolMessages to come immediately after AIMessage with tool_calls
-        # AND each ToolMessage must have a tool_call_id matching a tool_call in the AIMessage
-        # CRITICAL: Only include AIMessage with tool_calls if ALL tool_call_ids have matching ToolMessages
-        filtered_messages = []
-        i = 0
-        while i < len(messages):
-            msg = messages[i]
-            # If it's an AIMessage with tool_calls, check if all tool_calls have responses
-            if isinstance(msg, AIMessage) and hasattr(msg, 'tool_calls') and msg.tool_calls:
-                # Get all tool_call_ids from this AIMessage
-                tool_call_ids = {tc.get('id') for tc in msg.tool_calls if tc.get('id')}
-                # Check if all tool_call_ids have matching ToolMessages immediately following
-                matched_tool_call_ids = set()
-                j = i + 1
-                while j < len(messages) and isinstance(messages[j], ToolMessage):
-                    tool_msg = messages[j]
-                    if hasattr(tool_msg, 'tool_call_id') and tool_msg.tool_call_id in tool_call_ids:
-                        matched_tool_call_ids.add(tool_msg.tool_call_id)
-                    j += 1
-                
-                # Only include if ALL tool_call_ids have matching ToolMessages
-                if matched_tool_call_ids == tool_call_ids and len(tool_call_ids) > 0:
-                    filtered_messages.append(msg)
-                    i += 1
-                    # Include all matching ToolMessages
-                    while i < len(messages) and isinstance(messages[i], ToolMessage):
-                        tool_msg = messages[i]
-                        if hasattr(tool_msg, 'tool_call_id') and tool_msg.tool_call_id in tool_call_ids:
-                            filtered_messages.append(tool_msg)
-                            i += 1
-                        else:
-                            break
-                else:
-                    # Not all tool_calls have responses - skip this AIMessage and its ToolMessages
-                    i += 1
-                    while i < len(messages) and isinstance(messages[i], ToolMessage):
-                        i += 1
-            # If it's a HumanMessage or AIMessage without tool_calls, include it
-            elif isinstance(msg, (HumanMessage, AIMessage)) and not (hasattr(msg, 'tool_calls') and msg.tool_calls):
-                filtered_messages.append(msg)
-                i += 1
-            # Skip standalone ToolMessages (they should have been paired above)
-            else:
-                i += 1
+        # CRITICAL: Clean messages first to ensure proper pairing
+        # Use the _clean_messages method to ensure ToolMessages are properly paired
+        filtered_messages = self._clean_messages(messages)
         
         # Take last few messages for context (but ensure proper pairing)
+        # Limit to last 5 messages to prevent token bloat
         context_messages = filtered_messages[-5:] if len(filtered_messages) > 5 else filtered_messages
         
         # Prepare messages
@@ -627,6 +682,60 @@ class ECommerceAgent:
         state["action_plan"] = plan
         
         return state
+    
+    def _clean_messages(self, messages: List) -> List:
+        """
+        Clean messages to ensure proper pairing and remove duplicates.
+        Only keeps properly paired AIMessage+ToolMessage sequences.
+        """
+        if not messages:
+            return []
+        
+        cleaned = []
+        i = 0
+        while i < len(messages):
+            msg = messages[i]
+            
+            # Always include HumanMessages
+            if isinstance(msg, HumanMessage):
+                cleaned.append(msg)
+                i += 1
+            # For AIMessages with tool_calls, include only if we have matching ToolMessages
+            elif isinstance(msg, AIMessage) and hasattr(msg, 'tool_calls') and msg.tool_calls:
+                tool_call_ids = {tc.get('id') for tc in msg.tool_calls if tc.get('id')}
+                # Check if following messages are ToolMessages matching these IDs
+                matched_ids = set()
+                j = i + 1
+                while j < len(messages) and isinstance(messages[j], ToolMessage):
+                    if hasattr(messages[j], 'tool_call_id') and messages[j].tool_call_id in tool_call_ids:
+                        matched_ids.add(messages[j].tool_call_id)
+                    j += 1
+                
+                # Only include if ALL tool_call_ids have matching ToolMessages
+                if matched_ids == tool_call_ids and len(tool_call_ids) > 0:
+                    cleaned.append(msg)
+                    i += 1
+                    # Include matching ToolMessages
+                    while i < len(messages) and isinstance(messages[i], ToolMessage):
+                        if hasattr(messages[i], 'tool_call_id') and messages[i].tool_call_id in tool_call_ids:
+                            cleaned.append(messages[i])
+                            i += 1
+                        else:
+                            break
+                else:
+                    # Not all tool_calls have responses - skip this AIMessage
+                    i += 1
+                    while i < len(messages) and isinstance(messages[i], ToolMessage):
+                        i += 1
+            # For AIMessages without tool_calls, include them
+            elif isinstance(msg, AIMessage) and not (hasattr(msg, 'tool_calls') and msg.tool_calls):
+                cleaned.append(msg)
+                i += 1
+            # Skip standalone ToolMessages (should have been paired above)
+            else:
+                i += 1
+        
+        return cleaned
     
     def _should_use_tools(self, state: AgentState) -> str:
         """Decide whether to use tools or generate final answer"""
@@ -823,11 +932,40 @@ class ECommerceAgent:
             existing_values = {}
             existing_messages = []
         
-        # Limit existing messages to last 20 to prevent bloat
-        # Only keep recent messages for context
-        if len(existing_messages) > 20:
-            existing_messages = existing_messages[-20:]
-            logger.warning(f"[WORKFLOW] Truncated message history from {len(existing_state.values.get('messages', []))} to 20 messages")
+        # CRITICAL: Aggressively limit existing messages to prevent exponential bloat
+        # Only keep last 5 messages maximum to prevent conversation history explosion
+        # This is CRITICAL - checkpoint can accumulate millions of messages if not limited
+        original_count = len(existing_messages)
+        if original_count > 5:
+            # Keep only last 5 messages, ensuring proper pairing
+            existing_messages = self._clean_messages(existing_messages[-5:])
+            logger.warning(f"[WORKFLOW] CRITICAL: Truncated message history from {original_count} to {len(existing_messages)} messages")
+            # CRITICAL: Update checkpoint IMMEDIATELY with cleaned messages to prevent future bloat
+            # This prevents the checkpoint from accumulating millions of messages
+            try:
+                if existing_state.values:
+                    existing_state.values["messages"] = existing_messages
+                    # Force update checkpoint - this is critical to prevent bloat
+                    self.app.update_state(config, existing_state.values)
+                    logger.info(f"[WORKFLOW] Updated checkpoint with cleaned messages ({len(existing_messages)} messages)")
+            except Exception as e:
+                logger.warning(f"[WORKFLOW] Failed to update checkpoint: {e}")
+                # If update fails, clear the checkpoint state entirely to prevent bloat
+                try:
+                    # Create a new clean state
+                    clean_state = {
+                        "messages": existing_messages,
+                        "user_email": existing_values.get("user_email", ""),
+                        "current_order_number": existing_values.get("current_order_number"),
+                        "current_process": existing_values.get("current_process"),
+                        "process_state": existing_values.get("process_state", {}),
+                        "verified_email": existing_values.get("verified_email"),
+                        "conversation_context": existing_values.get("conversation_context", {}),
+                    }
+                    self.app.update_state(config, clean_state)
+                    logger.info(f"[WORKFLOW] Reset checkpoint with clean state")
+                except:
+                    pass
         
         # Build messages - use existing messages from checkpoint OR conversation_history, not both
         messages = []
@@ -848,13 +986,12 @@ class ECommerceAgent:
         # Add current query
         messages.append(HumanMessage(content=query))
         
-        # Limit messages to prevent bloat - only keep recent conversation
-        if len(messages) > 30:
-            logger.warning(f"[WORKFLOW] ⚠️ Too many messages ({len(messages)}), truncating to last 30")
-            # Keep system messages and last 30
-            system_msgs = [m for m in messages if isinstance(m, SystemMessage)]
-            other_msgs = [m for m in messages if not isinstance(m, SystemMessage)]
-            messages = system_msgs + other_msgs[-30:]
+        # CRITICAL: Aggressively limit messages to prevent bloat
+        # Only keep last 5 messages maximum (very aggressive to prevent bloat)
+        if len(messages) > 5:
+            logger.warning(f"[WORKFLOW] CRITICAL: Too many messages ({len(messages)}), truncating to last 5")
+            # Clean and keep only last 5, ensuring proper pairing
+            messages = self._clean_messages(messages[-5:])
         
         # Preserve state across queries
         initial_state: AgentState = {
@@ -887,14 +1024,12 @@ class ECommerceAgent:
                 # Invoke with checkpointing
                 final_state = self.app.invoke(final_state, config)
                 
-                # Check message count and truncate if too large
+                # CRITICAL: Aggressively check message count and truncate if too large
                 messages = final_state.get("messages", [])
-                if len(messages) > 50:
-                    logger.warning(f"[WORKFLOW] ⚠️ Message count too high ({len(messages)}), truncating to last 30")
-                    # Keep system message if present, then last 30 messages
-                    system_msgs = [m for m in messages if isinstance(m, SystemMessage)]
-                    other_msgs = [m for m in messages if not isinstance(m, SystemMessage)]
-                    final_state["messages"] = system_msgs + other_msgs[-30:]
+                if len(messages) > 8:
+                    logger.warning(f"[WORKFLOW] CRITICAL: Message count too high ({len(messages)}), truncating to last 5")
+                    # Clean and keep only last 5, ensuring proper pairing
+                    final_state["messages"] = self._clean_messages(messages[-5:])
                     messages = final_state["messages"]
                 
                 # Check for loops
@@ -1027,13 +1162,18 @@ class ECommerceAgent:
         logger.info(f"[WORKFLOW] Tool results received: {len(tool_results_received)}")
         logger.info(f"[WORKFLOW] Final message count: {len(final_messages)}")
         
-        # Clean up final state messages before checkpoint saves (limit to 30)
-        if len(final_state.get("messages", [])) > 30:
+        # CRITICAL: Aggressively clean up final state messages before checkpoint saves (limit to 5)
+        # This prevents exponential growth in checkpoint storage
+        if len(final_state.get("messages", [])) > 5:
             final_messages_clean = final_state["messages"]
-            system_msgs = [m for m in final_messages_clean if isinstance(m, SystemMessage)]
-            other_msgs = [m for m in final_messages_clean if not isinstance(m, SystemMessage)]
-            final_state["messages"] = system_msgs + other_msgs[-30:]
-            logger.info(f"[WORKFLOW] Cleaned up messages before checkpoint: {len(final_messages_clean)} -> {len(final_state['messages'])}")
+            final_state["messages"] = self._clean_messages(final_messages_clean[-5:])
+            logger.info(f"[WORKFLOW] CRITICAL: Cleaned up messages before checkpoint: {len(final_messages_clean)} -> {len(final_state['messages'])}")
+        
+        # Force update checkpoint with cleaned messages to prevent accumulation
+        try:
+            self.app.update_state(config, final_state)
+        except:
+            pass
         
         return {
             "answer": answer,

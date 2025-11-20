@@ -46,6 +46,7 @@ def insert_seed_data():
             (str(uuid.uuid4()), 'alice@example.com', 'Alice Martinez', True, 'gold', 2800),
             (str(uuid.uuid4()), 'charlie@example.com', 'Charlie Garcia', True, 'silver', 900),
             (str(uuid.uuid4()), 'test@example.com', 'Test User', True, 'bronze', 500),
+            (str(uuid.uuid4()), 'ahmedyaqoobbusiness@gmail.com', 'Ahmed Yaqoob', True, 'gold', 2000),
         ]
         
         execute_values(
@@ -59,10 +60,16 @@ def insert_seed_data():
         
         # Get user IDs for orders
         cursor.execute("SELECT id, email FROM users WHERE email = 'john@example.com'")
-        john_id = cursor.fetchone()[0]
+        john_result = cursor.fetchone()
+        john_id = john_result[0] if john_result else None
         
         cursor.execute("SELECT id, email FROM users WHERE email = 'sarah@example.com'")
-        sarah_id = cursor.fetchone()[0]
+        sarah_result = cursor.fetchone()
+        sarah_id = sarah_result[0] if sarah_result else None
+        
+        cursor.execute("SELECT id, email FROM users WHERE email = 'ahmedyaqoobbusiness@gmail.com'")
+        ahmed_result = cursor.fetchone()
+        ahmed_id = ahmed_result[0] if ahmed_result else None
         
         # Insert products
         products = [
@@ -81,10 +88,13 @@ def insert_seed_data():
         print(f"[OK] Inserted {len(products)} products")
         
         # Insert orders
-        orders = [
-            ('880e8400-e29b-41d4-a716-446655440001', john_id, 'ORD-12345', 'shipped', 'captured', 'Credit Card', 49.99, 4.00, 5.99, 59.98, 'TRACK123456789', 'FedEx', datetime.now() + timedelta(days=3)),
-            ('880e8400-e29b-41d4-a716-446655440002', sarah_id, 'ORD-67890', 'delivered', 'captured', 'PayPal', 89.99, 7.20, 0.00, 97.19, 'TRACK987654321', 'UPS', datetime.now() - timedelta(days=2)),
-        ]
+        orders = []
+        if john_id:
+            orders.append(('880e8400-e29b-41d4-a716-446655440001', john_id, 'ORD-12345', 'shipped', 'captured', 'Credit Card', 49.99, 4.00, 5.99, 59.98, 'TRACK123456789', 'FedEx', datetime.now() + timedelta(days=3)))
+        if sarah_id:
+            orders.append(('880e8400-e29b-41d4-a716-446655440002', sarah_id, 'ORD-67890', 'delivered', 'captured', 'PayPal', 89.99, 7.20, 0.00, 97.19, 'TRACK987654321', 'UPS', datetime.now() - timedelta(days=2)))
+        if ahmed_id:
+            orders.append(('880e8400-e29b-41d4-a716-446655440003', ahmed_id, 'ORD-12345', 'shipped', 'captured', 'Credit Card', 49.99, 4.00, 5.99, 59.98, 'TRACK123456789', 'FedEx', datetime.now() + timedelta(days=3)))
         
         execute_values(
             cursor,
