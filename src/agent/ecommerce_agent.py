@@ -559,10 +559,16 @@ class ECommerceAgent:
         context_messages = filtered_messages[-5:] if len(filtered_messages) > 5 else filtered_messages
         
         # Prepare messages
+        # Limit context messages to prevent token bloat
+        # Only use last 10 messages for context (recent conversation)
+        limited_context = context_messages[-10:] if len(context_messages) > 10 else context_messages
+        
         reasoning_messages = [
             SystemMessage(content=system_msg),
             HumanMessage(content=query_with_context)
-        ] + context_messages
+        ] + limited_context
+        
+        logger.info(f"[REASON] Using {len(limited_context)} context messages (limited from {len(context_messages)})")
         
         logger.info(f"[REASON] Sending {len(reasoning_messages)} messages to LLM")
         logger.info(f"[REASON] System prompt length: {len(system_msg)} chars")
@@ -780,20 +786,43 @@ class ECommerceAgent:
         try:
             existing_state = self.app.get_state(config)
             existing_values = existing_state.values if existing_state.values else {}
+            existing_messages = existing_state.values.get("messages", []) if existing_state.values else []
         except:
             existing_values = {}
+            existing_messages = []
         
-        # Build messages from conversation history if provided
+        # Limit existing messages to last 20 to prevent bloat
+        # Only keep recent messages for context
+        if len(existing_messages) > 20:
+            existing_messages = existing_messages[-20:]
+            logger.warning(f"[WORKFLOW] Truncated message history from {len(existing_state.values.get('messages', []))} to 20 messages")
+        
+        # Build messages - use existing messages from checkpoint OR conversation_history, not both
         messages = []
-        if conversation_history:
-            for role, content in conversation_history:
+        
+        # If we have existing messages from checkpoint, use those (they're already in the right format)
+        if existing_messages:
+            messages = existing_messages.copy()
+            logger.info(f"[WORKFLOW] Using {len(messages)} messages from checkpoint")
+        # Otherwise, build from conversation_history if provided
+        elif conversation_history:
+            for role, content in conversation_history[-10:]:  # Only last 10 from history
                 if role == "user":
                     messages.append(HumanMessage(content=content))
                 elif role == "assistant":
                     messages.append(AIMessage(content=content))
+            logger.info(f"[WORKFLOW] Built {len(messages)} messages from conversation_history")
         
         # Add current query
         messages.append(HumanMessage(content=query))
+        
+        # Limit messages to prevent bloat - only keep recent conversation
+        if len(messages) > 30:
+            logger.warning(f"[WORKFLOW] ⚠️ Too many messages ({len(messages)}), truncating to last 30")
+            # Keep system messages and last 30
+            system_msgs = [m for m in messages if isinstance(m, SystemMessage)]
+            other_msgs = [m for m in messages if not isinstance(m, SystemMessage)]
+            messages = system_msgs + other_msgs[-30:]
         
         # Preserve state across queries
         initial_state: AgentState = {
@@ -826,8 +855,17 @@ class ECommerceAgent:
                 # Invoke with checkpointing
                 final_state = self.app.invoke(final_state, config)
                 
-                # Check for loops
+                # Check message count and truncate if too large
                 messages = final_state.get("messages", [])
+                if len(messages) > 50:
+                    logger.warning(f"[WORKFLOW] ⚠️ Message count too high ({len(messages)}), truncating to last 30")
+                    # Keep system message if present, then last 30 messages
+                    system_msgs = [m for m in messages if isinstance(m, SystemMessage)]
+                    other_msgs = [m for m in messages if not isinstance(m, SystemMessage)]
+                    final_state["messages"] = system_msgs + other_msgs[-30:]
+                    messages = final_state["messages"]
+                
+                # Check for loops
                 recent_tool_calls = []
                 for msg in messages[-10:]:
                     if hasattr(msg, "tool_calls") and msg.tool_calls:
@@ -882,13 +920,27 @@ class ECommerceAgent:
             print(f"[ERROR] Agent workflow error: {e}")
         
         # Extract final answer
-        final_messages = final_state.get("messages", [])
-        answer = final_messages[-1].content if final_messages else "I apologize, but I couldn't process your request."
+        final_messages = final_state.get("messages", []) if final_state else []
         
-        # Collect debug info
+        # Limit final messages for processing
+        if len(final_messages) > 50:
+            logger.warning(f"[WORKFLOW] Final message count too high ({len(final_messages)}), using last 30 for processing")
+            final_messages = final_messages[-30:]
+        
+        answer = "I apologize, but I couldn't process your request."
+        
+        # Get last AI message (check recent messages first)
+        for msg in reversed(final_messages[-20:]):  # Check last 20 messages only
+            if isinstance(msg, AIMessage) and msg.content:
+                if not (hasattr(msg, "tool_calls") and msg.tool_calls):
+                    answer = msg.content
+                    break
+        
+        # Collect debug info (only from recent messages to avoid bloat)
         tool_calls_made = []
         tool_results_received = []
-        for msg in final_messages:
+        recent_messages = final_messages[-30:] if len(final_messages) > 30 else final_messages
+        for msg in recent_messages:
             if hasattr(msg, "tool_calls") and msg.tool_calls:
                 for tc in msg.tool_calls:
                     tool_calls_made.append({
@@ -904,6 +956,15 @@ class ECommerceAgent:
         logger.info(f"[WORKFLOW] Final answer: {answer[:200]}...")
         logger.info(f"[WORKFLOW] Tool calls made: {len(tool_calls_made)}")
         logger.info(f"[WORKFLOW] Tool results received: {len(tool_results_received)}")
+        logger.info(f"[WORKFLOW] Final message count: {len(final_messages)}")
+        
+        # Clean up final state messages before checkpoint saves (limit to 30)
+        if len(final_state.get("messages", [])) > 30:
+            final_messages_clean = final_state["messages"]
+            system_msgs = [m for m in final_messages_clean if isinstance(m, SystemMessage)]
+            other_msgs = [m for m in final_messages_clean if not isinstance(m, SystemMessage)]
+            final_state["messages"] = system_msgs + other_msgs[-30:]
+            logger.info(f"[WORKFLOW] Cleaned up messages before checkpoint: {len(final_messages_clean)} -> {len(final_state['messages'])}")
         
         return {
             "answer": answer,
