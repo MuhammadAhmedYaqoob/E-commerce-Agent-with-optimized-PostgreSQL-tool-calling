@@ -63,15 +63,48 @@ class SimpleMCPClient:
             self.process.stdin.write(request_json)
             self.process.stdin.flush()
             
-            # Read response
-            response_line = self.process.stdout.readline()
+            # Read response - skip any log lines, read until we get JSON
+            max_lines = 10
+            response_line = None
+            
+            for _ in range(max_lines):
+                line = self.process.stdout.readline()
+                if not line:
+                    time.sleep(0.1)
+                    continue
+                
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # Skip log lines (they start with [INFO], [WARNING], etc.)
+                if line.startswith('[') and ']' in line:
+                    continue
+                
+                # Try to parse as JSON
+                try:
+                    response = json.loads(line)
+                    if "jsonrpc" in response:  # Valid JSON-RPC response
+                        response_line = line
+                        break
+                except json.JSONDecodeError:
+                    continue
+            
             if response_line:
-                response = json.loads(response_line.strip())
-                if "result" in response:
-                    return response["result"]
-                elif "error" in response:
-                    return {"error": response["error"].get("message", "Unknown error")}
-            return {"error": "No response"}
+                try:
+                    response = json.loads(response_line)
+                    if "result" in response:
+                        result = response["result"]
+                        # Handle error in result
+                        if isinstance(result, dict) and "error" in result:
+                            return None
+                        return result
+                    elif "error" in response:
+                        error_msg = response["error"].get("message", "Unknown error")
+                        return {"error": error_msg}
+                except json.JSONDecodeError as e:
+                    return {"error": f"JSON decode error: {e}, response: {response_line[:100]}"}
+            return {"error": "No response from server"}
         except Exception as e:
             return {"error": str(e)}
 
@@ -105,7 +138,12 @@ class PostgreSQLMCPClient:
         """Get order by ID"""
         self._ensure_connected()
         result = self.client.call_tool("get_order_by_id", {"order_id": order_id})
-        return result if result and "error" not in result else None
+        # Check if result has error key (which means order not found)
+        if result and isinstance(result, dict):
+            if "error" in result:
+                return None
+            return result
+        return None
     
     def get_user_email_from_order(self, order_number: str) -> Optional[str]:
         """Get user email from order number"""

@@ -4,7 +4,15 @@ Handles 2FA codes and email notifications
 Uses simple JSON-RPC over stdio
 """
 import sys
+import logging
 from pathlib import Path
+
+# Redirect all logging to stderr to avoid interfering with JSON-RPC on stdout
+logging.basicConfig(
+    level=logging.WARNING,  # Only warnings and errors
+    stream=sys.stderr,
+    format='[%(levelname)s] %(message)s'
+)
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))

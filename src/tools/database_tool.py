@@ -72,7 +72,10 @@ class DatabaseTool:
                 user=LOCAL_DB_USER,
                 password=LOCAL_DB_PASSWORD
             )
-            print(f"[INFO] Connected to local PostgreSQL: {LOCAL_DB_NAME}")
+            # Use logging instead of print to allow redirection
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Connected to local PostgreSQL: {LOCAL_DB_NAME}")
         except Exception as e:
             print(f"[WARNING] Local PostgreSQL connection failed: {e}")
             print("[INFO] Running in mock mode - database operations will be simulated")
